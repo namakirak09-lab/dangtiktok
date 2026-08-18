@@ -1,0 +1,10 @@
+project_id = "postflow"
+
+[functions.queue-post]
+verify_jwt = false
+[functions.start-pairing]
+verify_jwt = false
+[functions.pairing-control]
+verify_jwt = false
+[functions.dispatch-runner]
+verify_jwt = false
