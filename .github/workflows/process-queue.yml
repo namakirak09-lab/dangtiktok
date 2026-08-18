@@ -1,0 +1,56 @@
+name: Process TikTok queue
+
+on:
+  workflow_dispatch:
+    inputs:
+      runner_job_id:
+        description: Supabase runner_jobs id
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: postflow-tiktok-queue
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      RUNNER_JOB_ID: ${{ inputs.runner_job_id }}
+      SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+      SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      SESSION_ENCRYPTION_KEY: ${{ secrets.SESSION_ENCRYPTION_KEY }}
+      DISPLAY: :99
+      MAX_POSTS_PER_RUN: '8'
+      MAX_RETRIES: '3'
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Resolve Chrome
+        run: |
+          CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+          if [ -z "$CHROME" ]; then echo "Chrome/Chromium not found"; exit 1; fi
+          echo "CHROME_BIN=$CHROME" >> "$GITHUB_ENV"
+
+      - name: Start virtual display
+        run: |
+          if ! command -v Xvfb >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq xvfb
+          fi
+          Xvfb :99 -screen 0 1280x800x24 -ac > /tmp/xvfb.log 2>&1 &
+          sleep 1
+
+      - name: Process due posts
+        run: node automation/process-queue.mjs
