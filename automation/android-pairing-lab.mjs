@@ -60,26 +60,27 @@ async function writeEnv(values) {
 }
 
 if (mode === 'init') {
-  let pairing = await latestPairing(['starting'])
-  if (!pairing) {
-    const accounts = await rest(
-      `tiktok_accounts?id=eq.${encodeURIComponent(accountId)}&select=owner_id`,
-      { headers: { Prefer: 'return=representation' } },
-    )
-    const ownerId = accounts?.[0]?.owner_id
-    if (!ownerId) throw new Error('Android pairing account does not exist')
-    const inserted = await rest('pairing_sessions?select=id,status,finish_requested_at', {
-      method: 'POST',
-      headers: { Prefer: 'return=representation' },
-      body: JSON.stringify({
-        owner_id: ownerId,
-        account_id: accountId,
-        status: 'starting',
-        expires_at: new Date(Date.now() + 35 * 60_000).toISOString(),
-      }),
-    })
-    pairing = inserted?.[0]
-  }
+  await rest(
+    `pairing_sessions?account_id=eq.${encodeURIComponent(accountId)}&status=in.(starting,ready,finishing)`,
+    { method: 'PATCH', body: JSON.stringify({ status: 'expired', live_url: null, view_password: null }) },
+  )
+  const accounts = await rest(
+    `tiktok_accounts?id=eq.${encodeURIComponent(accountId)}&select=owner_id`,
+    { headers: { Prefer: 'return=representation' } },
+  )
+  const ownerId = accounts?.[0]?.owner_id
+  if (!ownerId) throw new Error('Android pairing account does not exist')
+  const inserted = await rest('pairing_sessions?select=id,status,finish_requested_at', {
+    method: 'POST',
+    headers: { Prefer: 'return=representation' },
+    body: JSON.stringify({
+      owner_id: ownerId,
+      account_id: accountId,
+      status: 'starting',
+      expires_at: new Date(Date.now() + 35 * 60_000).toISOString(),
+    }),
+  })
+  const pairing = inserted?.[0]
   if (!pairing) throw new Error('Could not create an Android pairing request')
   const password = createHash('sha256').update(`postflow-android-v1:${pairing.id}`).digest('base64url').slice(0, 8)
   process.stdout.write(`::add-mask::${password}\n`)
@@ -178,7 +179,10 @@ if (mode === 'init') {
   const id = process.env.PAIRING_ID
   const message = process.env.PAIR_ERROR || 'Android pairing lab failed; diagnostics were captured.'
   if (id) await patchPairing(id, { status: 'failed', live_url: null, view_password: null, error: message })
-  await patchAccount({ status: 'needs_attention', attention_reason: message })
+  const latest = await latestPairing(['starting', 'ready', 'finishing', 'complete', 'failed'])
+  if (!latest || latest.id === id) {
+    await patchAccount({ status: 'needs_attention', attention_reason: message })
+  }
 } else {
   throw new Error(`Unknown Android pairing mode: ${mode}`)
 }

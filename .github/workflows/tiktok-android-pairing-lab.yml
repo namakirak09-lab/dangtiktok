@@ -60,13 +60,13 @@ jobs:
       - name: Start private desktop tunnel
         run: |
           set -euo pipefail
-          Xvfb :99 -screen 0 1280x920x24 -ac > /tmp/xvfb.log 2>&1 &
+          RUNNER_TRACKING_ID=postflow-pairing nohup Xvfb :99 -screen 0 1280x920x24 -ac </dev/null > /tmp/xvfb.log 2>&1 &
           for _ in $(seq 1 20); do xdpyinfo -display :99 >/dev/null 2>&1 && break; sleep 1; done
           xdpyinfo -display :99 >/dev/null
           x11vnc -storepasswd "$PAIR_VIEW_PASSWORD" /tmp/vnc.pass >/dev/null
-          x11vnc -display :99 -rfbauth /tmp/vnc.pass -forever -shared -rfbport 5900 -noxdamage > /tmp/x11vnc.log 2>&1 &
-          websockify --web=/usr/share/novnc/ 6080 localhost:5900 > /tmp/novnc.log 2>&1 &
-          cloudflared tunnel --no-autoupdate --url http://127.0.0.1:6080 > /tmp/cloudflared.log 2>&1 &
+          RUNNER_TRACKING_ID=postflow-pairing nohup x11vnc -display :99 -rfbauth /tmp/vnc.pass -forever -shared -rfbport 5900 -noxdamage </dev/null > /tmp/x11vnc.log 2>&1 &
+          RUNNER_TRACKING_ID=postflow-pairing nohup websockify --web=/usr/share/novnc/ 6080 localhost:5900 </dev/null > /tmp/novnc.log 2>&1 &
+          RUNNER_TRACKING_ID=postflow-pairing nohup cloudflared tunnel --no-autoupdate --url http://127.0.0.1:6080 </dev/null > /tmp/cloudflared.log 2>&1 &
           for _ in $(seq 1 45); do
             url=$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' /tmp/cloudflared.log | head -n1 || true)
             if [ -n "$url" ]; then
@@ -76,9 +76,8 @@ jobs:
             sleep 1
           done
           test -n "${url:-}"
-
-      - name: Publish private pairing window
-        run: node automation/android-pairing-lab.mjs ready
+          timeout 5 bash -c '</dev/tcp/127.0.0.1/5900'
+          timeout 5 bash -c '</dev/tcp/127.0.0.1/6080'
 
       - name: Download and verify TikTok APK splits
         run: |

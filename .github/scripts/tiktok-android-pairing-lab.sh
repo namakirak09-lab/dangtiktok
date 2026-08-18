@@ -29,6 +29,9 @@ for _ in $(seq 1 30); do
   sleep 1
 done
 kill -0 "$scrcpy_pid"
+timeout 5 bash -c '</dev/tcp/127.0.0.1/5900'
+timeout 5 bash -c '</dev/tcp/127.0.0.1/6080'
+node automation/android-pairing-lab.mjs ready
 
 node automation/android-pairing-lab.mjs wait
 DIAGNOSTICS_DIR="$diagnostics_dir" bash .github/scripts/verify-tiktok-login.sh
