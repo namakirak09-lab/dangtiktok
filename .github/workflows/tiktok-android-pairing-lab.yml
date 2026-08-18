@@ -42,30 +42,43 @@ jobs:
           sudo udevadm trigger --name-match=kvm
           test -e /dev/kvm
 
-      - name: Install remote Android desktop
+      - name: Install X11 packages
         run: |
           set -euo pipefail
-          sudo apt-get -o Acquire::Retries=5 update -qq
-          sudo apt-get -o Acquire::Retries=5 install -y -qq --no-install-recommends xvfb x11-utils x11vnc zstd
+          for attempt in 1 2 3; do
+            if timeout 180 sudo apt-get -o Acquire::Retries=3 update -qq \
+              && timeout 180 sudo apt-get -o Acquire::Retries=3 install -y -qq --no-install-recommends xvfb x11-utils x11vnc zstd; then
+              exit 0
+            fi
+            sleep $((attempt * 10))
+          done
+          exit 1
 
-          curl -fL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 \
+      - name: Install pinned remote desktop binaries
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 --retry-all-errors --retry-max-time 180 \
+            --connect-timeout 15 --max-time 180 --speed-time 30 --speed-limit 1024 \
             -o /tmp/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2026.8.2/cloudflared-linux-amd64
           echo 'fcfb02b575a52ca1af2e3267af4e1517bcdeb30ac48c834c69abaed3c0576ad2  /tmp/cloudflared' | sha256sum -c --strict
           sudo install -m 0755 /tmp/cloudflared /usr/local/bin/cloudflared
 
-          curl -fL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 \
+          curl -fL --retry 3 --retry-all-errors --retry-max-time 180 \
+            --connect-timeout 15 --max-time 180 --speed-time 30 --speed-limit 1024 \
             -o /tmp/novnc-v1.7.0.tar.gz https://github.com/novnc/noVNC/archive/refs/tags/v1.7.0.tar.gz
           echo 'b1003a11b6e6e8d8f7f5e5586daae7f8ca651d8aee0aa155ff9ac841c48f52c6  /tmp/novnc-v1.7.0.tar.gz' | sha256sum -c --strict
           sudo mkdir -p /opt/novnc
           sudo tar -xzf /tmp/novnc-v1.7.0.tar.gz --strip-components=1 -C /opt/novnc
 
-          curl -fL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 \
+          curl -fL --retry 3 --retry-all-errors --retry-max-time 180 \
+            --connect-timeout 15 --max-time 180 --speed-time 30 --speed-limit 1024 \
             -o /tmp/websockify-v0.13.0.tar.gz https://github.com/novnc/websockify/archive/refs/tags/v0.13.0.tar.gz
           echo 'b6413e364efd04f3c92ec8c17747e3c4adc20157c2ef1c5d019a26d944a46df8  /tmp/websockify-v0.13.0.tar.gz' | sha256sum -c --strict
           sudo mkdir -p /opt/websockify
           sudo tar -xzf /tmp/websockify-v0.13.0.tar.gz --strip-components=1 -C /opt/websockify
 
-          curl -fL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 \
+          curl -fL --retry 3 --retry-all-errors --retry-max-time 180 \
+            --connect-timeout 15 --max-time 180 --speed-time 30 --speed-limit 1024 \
             -o /tmp/scrcpy-linux-x86_64-v4.1.tar.gz \
             https://github.com/Genymobile/scrcpy/releases/download/v4.1/scrcpy-linux-x86_64-v4.1.tar.gz
           echo 'ad56ae8bfeedf41e824945c11dbf55fcb092b3e615b9b486f48a50e30d389635  /tmp/scrcpy-linux-x86_64-v4.1.tar.gz' | sha256sum -c --strict
