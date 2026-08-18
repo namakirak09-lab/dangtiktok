@@ -93,13 +93,15 @@ jobs:
             rm -rf apkout
             mkdir -p apkout
             if /tmp/apkeep -a com.zhiliaoapp.musically -d apk-pure apkout; then
-              downloaded=true
-              break
+              package=$(find apkout -type f \( -name '*.xapk' -o -name '*.apk' \) | head -1)
+              if [ -n "$package" ]; then
+                downloaded=true
+                break
+              fi
             fi
             sleep $((attempt * 20))
           done
           test "$downloaded" = true
-          package=$(find apkout -type f \( -name '*.xapk' -o -name '*.apk' \) | head -1)
           test -n "$package"
           case "$package" in
             *.xapk) unzip -q "$package" -d tiktok-splits ;;
