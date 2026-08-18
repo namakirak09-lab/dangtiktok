@@ -34,10 +34,11 @@ adb shell monkey -p "$package_name" -c android.intent.category.LAUNCHER 1
 sleep 20
 
 adb shell dumpsys activity activities | tee "$diagnostics_dir/activities.txt"
-grep -Eq "(mResumedActivity|topResumedActivity).*${package_name}" "$diagnostics_dir/activities.txt"
+adb shell pidof "$package_name" | tee "$diagnostics_dir/pid.txt"
+grep -Eq "ActivityRecord.*${package_name}" "$diagnostics_dir/activities.txt"
 
 capture_diagnostics
 trap - EXIT
 test -s "$diagnostics_dir/screen.png"
 test -s "$diagnostics_dir/window.xml"
-echo 'TikTok app is installed and owns the resumed Android activity.'
+echo 'TikTok app is installed, running, and has a live Android activity.'

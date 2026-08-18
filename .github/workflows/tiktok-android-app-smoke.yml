@@ -73,13 +73,13 @@ jobs:
           printf '%s\n' "${apks[@]}" > tiktok-apks.txt
           echo "TIKTOK_APK_LIST=$PWD/tiktok-apks.txt" >> "$GITHUB_ENV"
 
-      - name: Boot ARM-compatible Android 11 and launch TikTok
+      - name: Boot ARM-compatible Android 15 and launch TikTok
         uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 30
+          api-level: 35
           target: google_apis
           arch: x86_64
-          profile: pixel_4
+          profile: pixel_6
           cores: 2
           ram-size: 4096M
           heap-size: 512M
