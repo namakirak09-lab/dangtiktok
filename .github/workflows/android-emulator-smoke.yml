@@ -34,7 +34,7 @@ jobs:
           cores: 2
           ram-size: 4096M
           heap-size: 512M
-          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics
           disable-animations: true
           script: |
             adb wait-for-device
@@ -44,8 +44,8 @@ jobs:
             adb shell settings put global animator_duration_scale 0
             adb shell wm size 1080x1920
             adb shell wm density 420
-            adb shell screencap -p /sdcard/boot.png
-            adb pull /sdcard/boot.png boot.png
+            adb exec-out screencap -p > boot.png
+            test -s boot.png
             echo "Android emulator booted successfully"
 
       - name: Upload emulator proof
