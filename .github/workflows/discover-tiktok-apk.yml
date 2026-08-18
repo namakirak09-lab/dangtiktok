@@ -1,8 +1,6 @@
 name: Discover official TikTok APK
 
 on:
-  push:
-    branches: [android-publisher-lab]
   pull_request:
     branches: [main]
   workflow_dispatch:

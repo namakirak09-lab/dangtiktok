@@ -1,8 +1,6 @@
 name: Probe TikTok mobile web photo composer
 
 on:
-  push:
-    branches: [android-publisher-lab]
   pull_request:
     branches: [main]
   workflow_dispatch:

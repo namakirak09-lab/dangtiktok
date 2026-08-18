@@ -1,8 +1,6 @@
 name: Android publisher smoke
 
 on:
-  push:
-    branches: [android-publisher-lab]
   pull_request:
     branches: [main]
   workflow_dispatch:
