@@ -121,6 +121,15 @@ if (mode === 'init') {
     await new Promise((resolve) => setTimeout(resolve, 2500))
   }
   throw new Error('Android pairing window expired before login confirmation')
+} else if (mode === 'detected') {
+  const id = process.env.PAIRING_ID
+  if (!id) throw new Error('PAIRING_ID is unavailable')
+  await patchPairing(id, {
+    status: 'finishing',
+    finish_requested_at: new Date().toISOString(),
+    error: null,
+  })
+  process.stdout.write('Authenticated TikTok profile detected; saving the Android session.\n')
 } else if (mode === 'saved') {
   const id = process.env.PAIRING_ID
   const manifestPath = process.env.SESSION_MANIFEST_PATH

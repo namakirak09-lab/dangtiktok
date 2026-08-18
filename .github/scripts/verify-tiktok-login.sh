@@ -10,7 +10,9 @@ capture() {
   timeout 30 adb shell uiautomator dump /sdcard/window.xml >/dev/null 2>&1 || true
   adb pull /sdcard/window.xml "$diagnostics_dir/window.xml" >/dev/null 2>&1 || true
   adb shell dumpsys activity activities > "$diagnostics_dir/activities.txt" 2>&1 || true
-  adb logcat -d -v threadtime > "$diagnostics_dir/logcat.txt" 2>&1 || true
+  if [ "${VERIFY_PROBE:-false}" != 'true' ]; then
+    adb logcat -d -v threadtime > "$diagnostics_dir/logcat.txt" 2>&1 || true
+  fi
 }
 
 tap_matching_node() {
@@ -41,6 +43,20 @@ test -n "$(adb shell pidof "$package_name" | tr -d '\r')"
 # Android's first immersive-mode notice is a system overlay. Dismiss it by resource id.
 tap_matching_node 'android:id/ok|^Got it$' || true
 sleep 2
+
+# Never inject touches while TikTok is showing a login/security activity.
+capture
+if rg -qi 'I18nSignUpActivity|LoginActivity|AuthorizeActivity' "$diagnostics_dir/activities.txt"; then
+  echo 'TikTok is still on an authentication activity.' >&2
+  exit 1
+fi
+
+# The user may already have left the authenticated profile open.
+if rg -qi '(Edit profile|Sửa hồ sơ|Share profile|Chia sẻ hồ sơ|Set up profile|Thiết lập hồ sơ)' "$diagnostics_dir/window.xml" \
+  && rg -q "(mResumedActivity|topResumedActivity).*${package_name}.*MainActivity" "$diagnostics_dir/activities.txt"; then
+  echo 'TikTok account UI is authenticated.'
+  exit 0
+fi
 
 # Open the account screen through its accessibility label, never a fixed coordinate.
 tap_matching_node '^(Profile|Hồ sơ)$'

@@ -33,7 +33,16 @@ timeout 5 bash -c '</dev/tcp/127.0.0.1/5900'
 timeout 5 bash -c '</dev/tcp/127.0.0.1/6080'
 node automation/android-pairing-lab.mjs ready
 
-node automation/android-pairing-lab.mjs wait
+authenticated=false
+for _ in $(seq 1 192); do
+  if DIAGNOSTICS_DIR="$diagnostics_dir" VERIFY_PROBE=true bash .github/scripts/verify-tiktok-login.sh; then
+    authenticated=true
+    break
+  fi
+  sleep 10
+done
+test "$authenticated" = true
+node automation/android-pairing-lab.mjs detected
 DIAGNOSTICS_DIR="$diagnostics_dir" bash .github/scripts/verify-tiktok-login.sh
 
 adb shell am force-stop "$package_name"

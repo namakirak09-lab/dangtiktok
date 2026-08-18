@@ -82,31 +82,19 @@ jobs:
       - name: Download and verify TikTok APK splits
         run: |
           set -euo pipefail
-          curl -fL --retry 3 -o /tmp/apkeep 'https://github.com/EFForg/apkeep/releases/download/1.0.0/apkeep-x86_64-unknown-linux-gnu'
-          chmod +x /tmp/apkeep
           build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
           apksigner="$build_tools/apksigner"
           aapt="$build_tools/aapt"
-          mkdir -p apkout tiktok-splits
-          downloaded=false
-          for attempt in 1 2 3 4; do
-            rm -rf apkout
-            mkdir -p apkout
-            if /tmp/apkeep -a com.zhiliaoapp.musically -d apk-pure apkout; then
-              package=$(find apkout -type f \( -name '*.xapk' -o -name '*.apk' \) | head -1)
-              if [ -n "$package" ]; then
-                downloaded=true
-                break
-              fi
-            fi
-            sleep $((attempt * 20))
-          done
-          test "$downloaded" = true
-          test -n "$package"
-          case "$package" in
-            *.xapk) unzip -q "$package" -d tiktok-splits ;;
-            *.apk) cp "$package" tiktok-splits/base.apk ;;
-          esac
+          package="$RUNNER_TEMP/TikTok-46.5.3-2024605030.xapk"
+          download_url='https://d.apkpure.net/b/XAPK/com.zhiliaoapp.musically?nc=arm64-v8a&sv=23&versionCode=2024605030'
+          curl --fail-with-body --location --retry 5 --retry-all-errors \
+            --connect-timeout 20 --max-time 900 --output "$package" "$download_url"
+          echo 'b78f7c47b8e46ad066e580512c1aa03026966066  '"$package" | sha1sum --check --strict
+          test "$(stat -c '%s' "$package")" = '220422252'
+          unzip -tq "$package"
+          rm -rf tiktok-splits
+          mkdir -p tiktok-splits
+          unzip -q "$package" -d tiktok-splits
           mapfile -t apks < <(find tiktok-splits -type f -name '*.apk' | sort)
           test "${#apks[@]}" -gt 0
           base=''
@@ -118,7 +106,10 @@ jobs:
             if [ "$(basename "$apk")" = 'com.zhiliaoapp.musically.apk' ]; then base="$apk"; fi
           done
           test -n "$base"
-          "$aapt" dump badging "$base" | head -8
+          badging=$("$aapt" dump badging "$base")
+          printf '%s\n' "$badging" | head -8
+          printf '%s\n' "$badging" | grep -q "package: name='com.zhiliaoapp.musically'"
+          printf '%s\n' "$badging" | grep -q "versionCode='2024605030'"
           printf '%s\n' "${apks[@]}" > tiktok-apks.txt
           echo "TIKTOK_APK_LIST=$PWD/tiktok-apks.txt" >> "$GITHUB_ENV"
 
