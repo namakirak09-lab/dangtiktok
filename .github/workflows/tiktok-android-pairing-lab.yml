@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
           sudo apt-get -o Acquire::Retries=5 update -qq
-          sudo apt-get -o Acquire::Retries=5 install -y -qq --no-install-recommends xvfb x11vnc zstd
+          sudo apt-get -o Acquire::Retries=5 install -y -qq --no-install-recommends xvfb x11-utils x11vnc zstd
 
           curl -fL --retry 5 --retry-all-errors --connect-timeout 20 --max-time 300 \
             -o /tmp/cloudflared https://github.com/cloudflare/cloudflared/releases/download/2026.8.2/cloudflared-linux-amd64
