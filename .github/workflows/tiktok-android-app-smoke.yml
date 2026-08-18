@@ -35,6 +35,13 @@ jobs:
       - name: Download TikTok package and verify every APK signer
         run: |
           set -euo pipefail
+          BUILD_TOOLS=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          APKSIGNER="$BUILD_TOOLS/apksigner"
+          AAPT="$BUILD_TOOLS/aapt"
+          test -x "$APKSIGNER"
+          test -x "$AAPT"
+          echo "Using build tools: $BUILD_TOOLS"
+
           rm -rf apkout tiktok-splits
           mkdir -p apkout tiktok-splits
           apkeep -a com.zhiliaoapp.musically -d apk-pure apkout
@@ -44,19 +51,19 @@ jobs:
             *.xapk) unzip -q "$package" -d tiktok-splits ;;
             *.apk) cp "$package" tiktok-splits/base.apk ;;
           esac
-          find tiktok-splits -type f -maxdepth 3 -print
+          find tiktok-splits -maxdepth 3 -type f -print
           mapfile -t apks < <(find tiktok-splits -type f -name '*.apk' | sort)
           test "${#apks[@]}" -gt 0
           base=''
           for apk in "${apks[@]}"; do
-            cert=$(apksigner verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]' | head -1)
+            cert=$("$APKSIGNER" verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]' | head -1)
             echo "$(basename "$apk") signer=$cert"
             test "$cert" = '9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba'
-            pkg=$(aapt dump badging "$apk" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1 || true)
+            pkg=$("$AAPT" dump badging "$apk" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1 || true)
             if [ "$pkg" = 'com.zhiliaoapp.musically' ]; then base="$apk"; fi
           done
           test -n "$base"
-          aapt dump badging "$base" | head -8
+          "$AAPT" dump badging "$base" | head -8
           printf '%s\n' "${apks[@]}" > tiktok-apks.txt
           echo "TIKTOK_APK_LIST=$PWD/tiktok-apks.txt" >> "$GITHUB_ENV"
 
