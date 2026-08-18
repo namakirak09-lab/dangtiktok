@@ -1,10 +1,17 @@
 {
   "manifest_version": 3,
   "name": "PostFlow Session Bridge",
-  "version": "1.0.0",
-  "description": "Xuất phiên TikTok đang đăng nhập trong Chrome để nhập vào PostFlow.",
-  "permissions": ["cookies", "tabs", "scripting", "downloads"],
-  "host_permissions": ["https://*.tiktok.com/*"],
+  "version": "1.1.0",
+  "description": "Xuất phiên TikTok đầy đủ từ Chrome thật để PostFlow kiểm tra và dùng trên cloud.",
+  "permissions": [
+    "cookies",
+    "tabs",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://*.tiktok.com/*"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "PostFlow Session Bridge"

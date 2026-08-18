@@ -1,16 +1,7 @@
-# KNOWN LIMITS — PostFlow v2.2
+# Known limits — v2.3
 
-## Pairing
-Pairing được thực hiện từ Chrome thật của người dùng bằng Session Bridge, không phải Chrome cloud. Điều này loại bỏ lỗi OTP/xác minh ngay trong bước ghép phiên do môi trường remote login.
-
-## Cloud runner
-Sau pairing, scheduled post vẫn chạy bằng browser cloud. Nếu TikTok chủ động vô hiệu hóa session khi thấy môi trường mới, account sẽ chuyển `needs_attention`; cập nhật session từ Chrome lại là đường phục hồi hiện tại.
-
-## TikTok UI
-Photo composer và sound picker có thể khác theo account/khu vực. Selectors tập trung trong `automation/lib/tiktok-ui.mjs`.
-
-## Scheduler
-Supabase cron đánh thức GitHub runner khi có bài tới hạn; có thể trễ vài phút do startup queue.
-
-## Music
-Recommended/search phụ thuộc sound UI hiện ra trên TikTok Web.
+- Publisher chính là TikTok Web UI, không phụ thuộc TikTok Developer API.
+- PostFlow không tự vượt CAPTCHA, OTP, 2FA, age/security challenge. Nếu TikTok thực sự phát challenge, job chuyển `Cần xác nhận`.
+- Session Bridge v2 phải được export từ Chrome đang đăng nhập thật. Sau import, cloud validation là bắt buộc; account không được đánh dấu Ready chỉ dựa vào việc file JSON hợp lệ.
+- GitHub-hosted Windows runner vẫn là cloud runner và IP có thể thay đổi giữa các job. v2.3 giảm mismatch bằng Windows runner + profile headers/storage và tự kiểm tra cloud ngay sau import, nhưng không thể bắt TikTok cam kết giữ session mãi nếu chính TikTok thu hồi session.
+- Photo mode và sound picker phụ thuộc UI TikTok Web của tài khoản/khu vực. Nếu Photo mode không tồn tại, validation báo ngay thay vì để tới giờ đăng mới lỗi.

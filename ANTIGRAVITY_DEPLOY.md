@@ -1,19 +1,27 @@
-# Antigravity deploy — PostFlow v2.2
+# Antigravity deploy — PostFlow v2.3
 
-Deploy end-to-end, **không quay lại pairing cloud/noVNC** và không chuyển sang TikTok API.
+Đây là PATCH cho project `dangtiktok` hiện tại, không phải project mới.
 
-Checklist:
-1. `npm install`, `npm run typecheck`, `npm run build`.
-2. Chạy toàn bộ Supabase migrations bằng `supabase db push`, gồm migration `202608180002_local_session_import.sql`.
-3. Deploy đúng 3 Edge Functions: `queue-post`, `dispatch-runner`, `import-session`.
-4. Set Supabase Function secrets: `GITHUB_AUTOMATION_REPO`, `GITHUB_AUTOMATION_TOKEN`, `GITHUB_AUTOMATION_REF=main`, `DISPATCH_SECRET`, `SESSION_ENCRYPTION_KEY`.
-5. Set GitHub Actions secrets: `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `SESSION_ENCRYPTION_KEY`.
-6. `SESSION_ENCRYPTION_KEY` ở Supabase và GitHub phải giống hệt nhau.
-7. Giữ workflow `.github/workflows/process-queue.yml`. Không tạo lại `pair-tiktok.yml`.
-8. Chạy `supabase/cron_setup.sql` sau khi điền project ref + dispatch secret.
-9. Deploy frontend lên Cloudflare Pages với `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`.
-10. Test extension download `/postflow-session-bridge.zip` trả file hợp lệ.
-11. Test 1 account: local Chrome TikTok login → extension export → PostFlow import → account ready → 2 ảnh → schedule 5–10 phút.
-12. Nếu post runner gặp selector mismatch, patch tối thiểu `automation/lib/tiktok-ui.mjs`.
+## Quy tắc
+- Không rewrite frontend.
+- Không chuyển sang TikTok API.
+- Không tạo Supabase/GitHub/Cloudflare project mới.
+- Không khôi phục noVNC, QR cloud, pair-tiktok.
+- Patch tối thiểu đúng source trong ZIP.
 
-Không dùng lại remote login/cloud noVNC vì đó là nguyên nhân làm TikTok yêu cầu verification liên tục ở bước pairing.
+## Làm theo thứ tự
+1. Đọc `PATCH_EXISTING.md`.
+2. `npm install`
+3. `npm run typecheck`
+4. `npm run build`
+5. Apply migration `202608180003_cloud_session_validation.sql` vào Supabase hiện tại.
+6. Deploy Edge Functions `import-session` và `validate-session`; giữ `queue-post`, `dispatch-runner` hiện tại.
+7. Xác nhận secrets của `validate-session` giống secrets GitHub automation đang dùng.
+8. Push source/workflows lên GitHub repo hiện tại.
+9. Deploy `dist/` đè Cloudflare Pages hiện tại.
+10. Không tự ghép TikTok. Dừng lại và báo user tải Session Bridge mới, export session v2, import vào web.
+
+## Tiêu chí pass
+Sau khi user import session v2:
+`Đang kiểm tra cloud -> Sẵn sàng tự đăng`
+phải do workflow `validate-session.yml` chạy thật và pass. Không được set Ready giả ở frontend/database.

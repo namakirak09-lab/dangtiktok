@@ -4,7 +4,7 @@ const TEXT = {
   search: /(search|tìm kiếm|tìm)/i,
   post: /^(post|đăng)$/i,
   caption: /(caption|description|mô tả|chú thích)/i,
-  challenge: /(captcha|verify to continue|verification required|xác minh|confirm your age|age verification|xác nhận tuổi|security check|two-step verification|2-step verification)/i,
+  challenge: /(captcha|verify to continue|verification required|xác minh danh tính|xác minh để tiếp tục|mã xác minh|confirm your age|age verification|xác nhận tuổi|security check|two-step verification|2-step verification)/i,
   success: /(posted|post uploaded|upload complete|đã đăng|đăng thành công|processing your post|your post is being processed)/i,
 }
 
@@ -45,6 +45,19 @@ export async function detectPhotoCapability(page) {
     if (await imageFileInput(page)) return true
   }
   return false
+}
+
+export async function validateTikTokSession(page) {
+  await page.goto('https://www.tiktok.com/', { waitUntil: 'domcontentloaded', timeout: 60_000 })
+  await page.waitForTimeout(1800)
+  await assertNoChallenge(page)
+
+  const composer = await openPhotoComposer(page)
+  if (!composer.ok) {
+    throw new NeedsAttention('Phiên đăng nhập còn hiệu lực nhưng TikTok Web của tài khoản này chưa có Photo mode.')
+  }
+  await assertNoChallenge(page)
+  return { photoWeb: true, url: composer.url }
 }
 
 export async function openPhotoComposer(page) {

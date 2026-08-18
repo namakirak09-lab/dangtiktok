@@ -70,3 +70,22 @@ export async function uploadDiagnostic(storagePath, buffer, contentType = 'image
   if (!res.ok) throw new Error(`Diagnostic upload ${res.status}: ${(await res.text()).slice(0, 300)}`)
   return storagePath
 }
+
+export async function downloadPrivateObject(bucket, storagePath, optional = false) {
+  const encoded = storagePath.split('/').map(encodeURIComponent).join('/')
+  const res = await fetch(`${base}/storage/v1/object/${encodeURIComponent(bucket)}/${encoded}`, { headers: { apikey: key, Authorization: `Bearer ${key}` } })
+  if (optional && res.status === 404) return null
+  if (!res.ok) throw new Error(`Storage download ${res.status}: ${bucket}/${storagePath}`)
+  return Buffer.from(await res.arrayBuffer())
+}
+
+export async function uploadPrivateObject(bucket, storagePath, buffer, contentType = 'application/octet-stream') {
+  const encoded = storagePath.split('/').map(encodeURIComponent).join('/')
+  const res = await fetch(`${base}/storage/v1/object/${encodeURIComponent(bucket)}/${encoded}`, {
+    method: 'POST',
+    headers: { apikey: key, Authorization: `Bearer ${key}`, 'Content-Type': contentType, 'x-upsert': 'true' },
+    body: buffer,
+  })
+  if (!res.ok) throw new Error(`Storage upload ${res.status}: ${(await res.text()).slice(0, 300)}`)
+  return storagePath
+}

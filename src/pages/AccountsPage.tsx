@@ -5,10 +5,12 @@ import { invokeJson, supabase } from '../lib/supabase'
 import { formatDateTime } from '../lib/utils'
 
 type SessionExport = {
+  version?: number
   storageState?: {
     cookies?: unknown[]
     origins?: unknown[]
   }
+  sessionStorage?: Array<{ origin: string; values: Array<{ name: string; value: string }> }>
   clientProfile?: Record<string, unknown>
 }
 
@@ -40,16 +42,46 @@ export function AccountsPage({ accounts, refresh }: { accounts: TikTokAccount[];
     try {
       const raw = await file.text()
       const parsed = JSON.parse(raw) as SessionExport
+      if (parsed?.version !== 2) {
+        throw new Error('File phiên này là bản cũ. Hãy tải lại tiện ích ghép phiên từ PostFlow và xuất file v2 mới.')
+      }
       if (!parsed?.storageState || !Array.isArray(parsed.storageState.cookies)) {
         throw new Error('File phiên không đúng định dạng PostFlow.')
       }
       await invokeJson('import-session', {
         account_id: accountId,
         session_state: parsed.storageState,
+        session_storage: parsed.sessionStorage || [],
         client_profile: parsed.clientProfile || {},
       })
-      setNotice('Đã ghép phiên TikTok. Tài khoản sẵn sàng cho queue tự động.')
+      setNotice('Đã nhập phiên. Đang kiểm tra trực tiếp trên cloud...')
       await refresh()
+      await invokeJson('validate-session', { account_id: accountId })
+
+      const deadline = Date.now() + 180_000
+      while (Date.now() < deadline) {
+        await new Promise((resolve) => window.setTimeout(resolve, 3000))
+        const { data, error: pollError } = await supabase
+          .from('tiktok_accounts')
+          .select('status,attention_reason,last_health_at')
+          .eq('id', accountId)
+          .single()
+        if (pollError) throw pollError
+        if (data.status === 'ready') {
+          setNotice('Phiên đã được cloud kiểm tra thành công. Tài khoản sẵn sàng tự đăng.')
+          await refresh()
+          return
+        }
+        if (data.status === 'needs_attention' || data.status === 'unpaired') {
+          throw new Error(data.attention_reason || 'Cloud không dùng được phiên vừa nhập. Xuất lại bằng tiện ích mới rồi thử lại.')
+        }
+      }
+      await supabase.from('tiktok_accounts').update({
+        status: 'needs_attention',
+        attention_reason: 'Cloud kiểm tra phiên quá 3 phút chưa hoàn tất. Kiểm tra GitHub Actions rồi thử nhập lại phiên.',
+      }).eq('id', accountId)
+      await refresh()
+      throw new Error('Cloud kiểm tra phiên quá 3 phút chưa hoàn tất. Không để trạng thái quay vô hạn; hãy kiểm tra GitHub Actions rồi thử lại.')
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Không nhập được phiên TikTok.')
     } finally {
@@ -91,19 +123,20 @@ export function AccountsPage({ accounts, refresh }: { accounts: TikTokAccount[];
           <strong>Ghép phiên bằng Chrome thật</strong>
           <span>Không đăng nhập TikTok trong máy cloud nữa. Tải tiện ích, đăng nhập TikTok trên Chrome của ông rồi xuất file phiên.</span>
         </div>
-        <a className="secondary-btn" href="/postflow-session-bridge.zip" download>Tải tiện ích ghép phiên</a>
+        <a className="secondary-btn" href="/postflow-session-bridge-v2.zip" download>Tải tiện ích ghép phiên v2</a>
       </section>
 
       <div className="account-grid-page">
         {accounts.map((account) => {
           const isReady = account.status === 'ready'
+          const isValidating = account.status === 'pairing'
           const needsAttention = account.status === 'needs_attention'
           return (
             <article className="panel account-card" key={account.id}>
               <div className="account-main">
                 {account.avatar_url ? <img className="account-avatar" src={account.avatar_url} alt="" /> : <div className="account-avatar fallback"><Smartphone size={24} /></div>}
                 <div><strong>{account.nickname || account.label}</strong><span>{account.username ? `@${account.username}` : account.label}</span>
-                  <div className={`connected-line ${needsAttention ? 'attention' : ''}`}>{isReady ? <><CheckCircle2 size={14} /> Sẵn sàng tự đăng</> : needsAttention ? <>Cần cập nhật phiên</> : <>Chưa ghép phiên</>}</div>
+                  <div className={`connected-line ${needsAttention ? 'attention' : ''}`}>{isReady ? <><CheckCircle2 size={14} /> Sẵn sàng tự đăng</> : isValidating ? <><RefreshCw size={14} className="spin" /> Đang kiểm tra cloud</> : needsAttention ? <>Cần cập nhật phiên</> : <>Chưa ghép phiên</>}</div>
                 </div>
               </div>
 
@@ -123,8 +156,8 @@ export function AccountsPage({ accounts, refresh }: { accounts: TikTokAccount[];
               />
 
               <div className="card-actions">
-                <button className="secondary-btn" disabled={busyId === account.id} onClick={() => fileInputs.current[account.id]?.click()}>
-                  {busyId === account.id ? <RefreshCw size={16} className="spin" /> : <FileUp size={16} />} {isReady ? 'Cập nhật phiên' : 'Nhập phiên Chrome'}
+                <button className="secondary-btn" disabled={busyId === account.id || isValidating} onClick={() => fileInputs.current[account.id]?.click()}>
+                  {busyId === account.id || isValidating ? <RefreshCw size={16} className="spin" /> : <FileUp size={16} />} {isValidating ? 'Đang kiểm tra' : isReady ? 'Cập nhật phiên' : 'Nhập phiên Chrome'}
                 </button>
                 <button className="icon-danger" disabled={busyId === account.id} onClick={() => remove(account.id)}><Trash2 size={17} /></button>
               </div>

@@ -6,3 +6,6 @@ verify_jwt = false
 verify_jwt = false
 [functions.import-session]
 verify_jwt = false
+
+[functions.validate-session]
+verify_jwt = false

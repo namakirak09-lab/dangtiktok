@@ -4,6 +4,8 @@ import path from 'node:path'
 import { chromium } from 'playwright-core'
 import { decryptJson, encryptJson } from './lib/crypto.mjs'
 import { NeedsAttention, postPhotoCarousel } from './lib/tiktok-ui.mjs'
+import { baseContextOptions, seedPersistentContext, unpackSessionPayload } from './lib/browser-profile.mjs'
+import { restoreEncryptedProfile, saveEncryptedProfile } from './lib/profile-store.mjs'
 import { downloadAsset, getDuePosts, getUiSession, patch, uploadDiagnostic, upsert } from './lib/supabase.mjs'
 
 const chromePath = process.env.CHROME_BIN || '/usr/bin/google-chrome'
@@ -32,11 +34,12 @@ try {
       const attempt = Number(post.attempt_count || 0) + 1
       await patch('posts', `id=eq.${post.id}`, { status: 'processing', failure_reason: null, attempt_count: attempt })
       const work = await fs.mkdtemp(path.join(os.tmpdir(), 'postflow-'))
-      let browser
+      let context
+      let page
       try {
         const session = await getUiSession(post.account_id)
         if (!session?.encrypted_storage_state) throw new NeedsAttention('Không có phiên TikTok đã lưu.')
-        const storageState = decryptJson(session.encrypted_storage_state)
+        const payload = unpackSessionPayload(decryptJson(session.encrypted_storage_state))
         const profile = session.client_profile || {}
 
         const assets = [...(post.post_assets || [])].sort((a, b) => a.sort_order - b.sort_order)
@@ -50,26 +53,24 @@ try {
           imagePaths.push(target)
         }
 
-        browser = await chromium.launch({
-          headless: false,
+        const profileDir = path.join(work, 'chrome-profile')
+        await fs.mkdir(profileDir, { recursive: true })
+        await restoreEncryptedProfile(post.account_id, profileDir, work).catch((err) => {
+          console.warn('No reusable cloud profile restored:', err?.message || err)
+          return false
+        })
+        context = await chromium.launchPersistentContext(profileDir, {
+          ...baseContextOptions(profile),
+          headless: true,
           executablePath: chromePath,
           args: [
-            '--no-sandbox',
             '--disable-dev-shm-usage',
             '--window-size=1280,800',
             '--lang=vi-VN',
           ],
         })
-        const viewport = profile.viewport && Number(profile.viewport.width) > 0 && Number(profile.viewport.height) > 0
-          ? { width: Math.min(1600, Math.max(960, Number(profile.viewport.width))), height: Math.min(1000, Math.max(700, Number(profile.viewport.height))) }
-          : { width: 1280, height: 800 }
-        const context = await browser.newContext({
-          storageState,
-          viewport,
-          locale: typeof profile.locale === 'string' && profile.locale ? profile.locale : 'vi-VN',
-          timezoneId: typeof profile.timezoneId === 'string' && profile.timezoneId ? profile.timezoneId : 'Asia/Ho_Chi_Minh',
-        })
-        const page = await context.newPage()
+        await seedPersistentContext(context, payload.storageState, payload.sessionStorage)
+        page = context.pages()[0] || await context.newPage()
 
         const result = await postPhotoCarousel({
           page,
@@ -81,33 +82,36 @@ try {
           allowComments: post.allow_comments,
         })
 
-        const updatedState = await context.storageState({ indexedDB: true })
-        await upsert('ui_sessions', {
-          account_id: post.account_id,
-          encrypted_storage_state: encryptJson(updatedState),
-          last_ok_at: new Date().toISOString(),
-        }, 'account_id')
-
-        await patch('tiktok_accounts', `id=eq.${post.account_id}`, { status: 'ready', attention_reason: null, last_health_at: new Date().toISOString() })
+        // Mark the post first. Session/profile refresh is best-effort after the post click,
+        // so a storage failure cannot cause an automatic duplicate retry.
         await patch('posts', `id=eq.${post.id}`, {
           status: result.confirmed ? 'published' : 'submitted',
           runner_meta: { final_url: result.url, finished_at: new Date().toISOString() },
           failure_reason: null,
         })
-        await context.close()
+        await patch('tiktok_accounts', `id=eq.${post.account_id}`, { status: 'ready', attention_reason: null, last_health_at: new Date().toISOString() })
+
+        try {
+          const updatedState = await context.storageState({ indexedDB: true })
+          await upsert('ui_sessions', {
+            account_id: post.account_id,
+            encrypted_storage_state: encryptJson({ storageState: updatedState, sessionStorage: payload.sessionStorage }),
+            last_ok_at: new Date().toISOString(),
+          }, 'account_id')
+          await context.close()
+          context = null
+          await saveEncryptedProfile(post.account_id, profileDir, work)
+        } catch (stateErr) {
+          console.warn('Post succeeded but session/profile refresh failed:', stateErr)
+        }
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err)
         let diagnosticsPath = null
         try {
-          if (browser) {
-            const contexts = browser.contexts()
-            const pages = contexts[0]?.pages() || []
-            const page = pages[0]
-            if (page) {
-              const png = await page.screenshot({ fullPage: true })
-              diagnosticsPath = `${post.owner_id}/${post.id}-${Date.now()}.png`
-              await uploadDiagnostic(diagnosticsPath, png)
-            }
+          if (page) {
+            const png = await page.screenshot({ fullPage: true })
+            diagnosticsPath = `${post.owner_id}/${post.id}-${Date.now()}.png`
+            await uploadDiagnostic(diagnosticsPath, png)
           }
         } catch {}
 
@@ -128,7 +132,7 @@ try {
         }
         console.error(`Post ${post.id}:`, err)
       } finally {
-        if (browser) await browser.close().catch(() => {})
+        if (context) await context.close().catch(() => {})
         await fs.rm(work, { recursive: true, force: true })
       }
     }
