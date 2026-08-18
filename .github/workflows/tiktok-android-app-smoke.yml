@@ -66,8 +66,7 @@ jobs:
             fi
             echo "$(basename "$apk") signer=$cert"
             test "$cert" = "$expected"
-            pkg=$("$AAPT" dump badging "$apk" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1 || true)
-            if [ "$pkg" = 'com.zhiliaoapp.musically' ]; then base="$apk"; fi
+            if [ "$(basename "$apk")" = 'com.zhiliaoapp.musically.apk' ]; then base="$apk"; fi
           done
           test -n "$base"
           "$AAPT" dump badging "$base" | head -8
@@ -86,28 +85,12 @@ jobs:
           heap-size: 512M
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics
           disable-animations: true
-          script: |
-            set -eu
-            adb wait-for-device
-            test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
-            echo 'Supported ABIs:'
-            adb shell getprop ro.product.cpu.abilist
-            apk_args=$(tr '\n' ' ' < "$TIKTOK_APK_LIST")
-            adb install-multiple -r $apk_args
-            adb shell pm path com.zhiliaoapp.musically
-            adb shell monkey -p com.zhiliaoapp.musically -c android.intent.category.LAUNCHER 1
-            sleep 15
-            adb shell uiautomator dump /sdcard/window.xml || true
-            adb pull /sdcard/window.xml window.xml || true
-            adb exec-out screencap -p > tiktok-launch.png
-            test -s tiktok-launch.png
-            echo 'TikTok launched.'
+          script: bash .github/scripts/tiktok-app-smoke.sh
 
       - name: Upload proof
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: tiktok-android-app-smoke
-          path: |
-            tiktok-launch.png
-            window.xml
+          path: android-diagnostics/
           if-no-files-found: error
