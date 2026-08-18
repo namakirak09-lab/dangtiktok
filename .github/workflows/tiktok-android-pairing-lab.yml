@@ -1,0 +1,226 @@
+name: TikTok Android pairing lab
+
+on:
+  push:
+    branches: [android-publisher-lab]
+    paths:
+      - '.github/workflows/tiktok-android-pairing-lab.yml'
+      - '.github/scripts/tiktok-android-pairing-lab.sh'
+      - '.github/scripts/tiktok-android-restore-lab.sh'
+      - '.github/scripts/verify-tiktok-login.sh'
+      - 'automation/android-pairing-lab.mjs'
+
+permissions:
+  contents: read
+
+env:
+  ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+  SESSION_ENCRYPTION_KEY: ${{ secrets.SESSION_ENCRYPTION_KEY }}
+
+jobs:
+  pair-and-save:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DISPLAY: :99
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve private pairing request
+        run: node automation/android-pairing-lab.mjs init
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          test -e /dev/kvm
+
+      - name: Install remote Android desktop
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xvfb x11vnc novnc websockify zstd
+
+          curl -fL --retry 3 -o /tmp/cloudflared.deb \
+            https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+          sudo dpkg -i /tmp/cloudflared.deb
+
+          curl -fL --retry 3 -o /tmp/scrcpy.tar.gz \
+            https://github.com/Genymobile/scrcpy/releases/download/v4.1/scrcpy-linux-x86_64-v4.1.tar.gz
+          curl -fL --retry 3 -o /tmp/SHA256SUMS.txt \
+            https://github.com/Genymobile/scrcpy/releases/download/v4.1/SHA256SUMS.txt
+          (cd /tmp && grep ' scrcpy-linux-x86_64-v4.1.tar.gz$' SHA256SUMS.txt | sha256sum -c -)
+          sudo mkdir -p /opt/scrcpy
+          sudo tar -xzf /tmp/scrcpy.tar.gz --strip-components=1 -C /opt/scrcpy
+          echo '/opt/scrcpy' >> "$GITHUB_PATH"
+
+      - name: Start private desktop tunnel
+        run: |
+          set -euo pipefail
+          Xvfb :99 -screen 0 1280x920x24 -ac > /tmp/xvfb.log 2>&1 &
+          for _ in $(seq 1 20); do xdpyinfo -display :99 >/dev/null 2>&1 && break; sleep 1; done
+          xdpyinfo -display :99 >/dev/null
+          x11vnc -storepasswd "$PAIR_VIEW_PASSWORD" /tmp/vnc.pass >/dev/null
+          x11vnc -display :99 -rfbauth /tmp/vnc.pass -forever -shared -rfbport 5900 -noxdamage > /tmp/x11vnc.log 2>&1 &
+          websockify --web=/usr/share/novnc/ 6080 localhost:5900 > /tmp/novnc.log 2>&1 &
+          cloudflared tunnel --no-autoupdate --url http://127.0.0.1:6080 > /tmp/cloudflared.log 2>&1 &
+          for _ in $(seq 1 45); do
+            url=$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' /tmp/cloudflared.log | head -n1 || true)
+            if [ -n "$url" ]; then
+              echo "PAIR_LIVE_URL=$url/vnc.html?autoconnect=true&resize=scale" >> "$GITHUB_ENV"
+              break
+            fi
+            sleep 1
+          done
+          test -n "${url:-}"
+
+      - name: Publish private pairing window
+        run: node automation/android-pairing-lab.mjs ready
+
+      - name: Download and verify TikTok APK splits
+        run: |
+          set -euo pipefail
+          curl -fL --retry 3 -o /tmp/apkeep 'https://github.com/EFForg/apkeep/releases/download/1.0.0/apkeep-x86_64-unknown-linux-gnu'
+          chmod +x /tmp/apkeep
+          build_tools=$(find "$ANDROID_HOME/build-tools" -mindepth 1 -maxdepth 1 -type d | sort -V | tail -1)
+          apksigner="$build_tools/apksigner"
+          aapt="$build_tools/aapt"
+          mkdir -p apkout tiktok-splits
+          /tmp/apkeep -a com.zhiliaoapp.musically -d apk-pure apkout
+          package=$(find apkout -type f \( -name '*.xapk' -o -name '*.apk' \) | head -1)
+          test -n "$package"
+          case "$package" in
+            *.xapk) unzip -q "$package" -d tiktok-splits ;;
+            *.apk) cp "$package" tiktok-splits/base.apk ;;
+          esac
+          mapfile -t apks < <(find tiktok-splits -type f -name '*.apk' | sort)
+          test "${#apks[@]}" -gt 0
+          base=''
+          expected='9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba'
+          for apk in "${apks[@]}"; do
+            verify_out=$("$apksigner" verify --verbose --print-certs "$apk" 2>&1)
+            cert=$(printf '%s\n' "$verify_out" | grep -m1 -E '(^| )Signer: certificate SHA-256 digest:' | sed 's/.*certificate SHA-256 digest: //' | tr '[:upper:]' '[:lower:]')
+            test "$cert" = "$expected"
+            if [ "$(basename "$apk")" = 'com.zhiliaoapp.musically.apk' ]; then base="$apk"; fi
+          done
+          test -n "$base"
+          "$aapt" dump badging "$base" | head -8
+          printf '%s\n' "${apks[@]}" > tiktok-apks.txt
+          echo "TIKTOK_APK_LIST=$PWD/tiktok-apks.txt" >> "$GITHUB_ENV"
+
+      - name: Login once, verify account, and save encrypted AVD
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          avd-name: test
+          cores: 2
+          ram-size: 4096M
+          heap-size: 512M
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics -no-snapshot
+          disable-animations: true
+          script: bash .github/scripts/tiktok-android-pairing-lab.sh
+
+      - name: Close pairing safely after failure
+        if: failure()
+        env:
+          PAIR_ERROR: Phiên Android lab dừng trước khi xác thực và lưu an toàn.
+        run: node automation/android-pairing-lab.mjs fail || true
+
+      - name: Upload P3 diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiktok-android-p3
+          path: android-pairing-diagnostics/
+          if-no-files-found: warn
+
+  cold-restore:
+    needs: pair-and-save
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve encrypted session
+        run: node automation/android-pairing-lab.mjs init-restore
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+          test -e /dev/kvm
+
+      - name: Download and decrypt persistent AVD
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq zstd
+          work="$RUNNER_TEMP/android-session-restore"
+          mkdir -p "$work" "$HOME/.android/avd"
+          download_object() {
+            curl --fail-with-body --silent --show-error \
+              "$SUPABASE_URL/storage/v1/object/authenticated/$1" \
+              --header "apikey: $SUPABASE_SERVICE_ROLE_KEY" \
+              --header "Authorization: Bearer $SUPABASE_SERVICE_ROLE_KEY"
+          }
+          download_object "browser-profiles/$SESSION_MANIFEST_PATH" > "$work/manifest.txt"
+          format=$(awk -F= '$1=="format"{print $2}' "$work/manifest.txt")
+          expected_sha=$(awk -F= '$1=="sha256"{print $2}' "$work/manifest.txt")
+          chunks=$(awk -F= '$1=="chunks"{print $2}' "$work/manifest.txt")
+          test "$format" = 'postflow-avd-v1'
+          [[ "$expected_sha" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$chunks" =~ ^[1-9][0-9]*$ ]]
+          prefix=${SESSION_MANIFEST_PATH%/manifest.txt}
+          for index in $(seq 0 $((chunks - 1))); do
+            suffix=$(printf '%03d' "$index")
+            download_object "browser-profiles/$prefix/session.part.$suffix" > "$work/session.part.$suffix"
+          done
+          pass_file=$(mktemp)
+          chmod 600 "$pass_file"
+          printf '%s' "$SESSION_ENCRYPTION_KEY" > "$pass_file"
+          cat "$work"/session.part.* \
+            | tee >(sha256sum | awk '{print $1}' > "$work/actual.sha") \
+            | gpg --batch --yes --pinentry-mode loopback --passphrase-file "$pass_file" --decrypt \
+            | zstd -d \
+            | tar -xf - -C "$HOME/.android/avd"
+          rm -f "$pass_file"
+          test "$(cat "$work/actual.sha")" = "$expected_sha"
+          test -d "$HOME/.android/avd/test.avd"
+          test -f "$HOME/.android/avd/test.ini"
+
+      - name: Boot a fresh job and verify TikTok login survived
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 35
+          target: google_apis
+          arch: x86_64
+          profile: pixel_6
+          avd-name: test
+          force-avd-creation: false
+          cores: 2
+          ram-size: 4096M
+          heap-size: 512M
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics -no-snapshot
+          disable-animations: true
+          script: bash .github/scripts/tiktok-android-restore-lab.sh
+
+      - name: Mark restore failure
+        if: failure()
+        env:
+          PAIR_ERROR: Phiên TikTok Android không sống qua cloud job mới; chưa được đánh dấu Ready.
+        run: node automation/android-pairing-lab.mjs fail || true
+
+      - name: Upload P4 diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiktok-android-p4
+          path: android-restore-diagnostics/
+          if-no-files-found: warn
