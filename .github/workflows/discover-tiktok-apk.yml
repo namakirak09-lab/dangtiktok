@@ -1,0 +1,41 @@
+name: Discover official TikTok APK
+
+on:
+  push:
+    branches: [android-publisher-lab]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch official TikTok Android download page
+        shell: bash
+        run: |
+          set -euo pipefail
+          UA='Mozilla/5.0 (Linux; Android 14; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36'
+          curl -L --fail --retry 3 --connect-timeout 15 -A "$UA" 'https://www.tiktok.com/download' -o tiktok-download.html
+          echo 'HTML bytes:' $(wc -c < tiktok-download.html)
+          python3 - <<'PY'
+          import re, html
+          s=open('tiktok-download.html','r',encoding='utf-8',errors='ignore').read()
+          urls=[]
+          for raw in re.findall(r'https?:\\?/\\?/[^"<> ]+', s):
+              u=html.unescape(raw.replace('\\u002F','/').replace('\\/','/'))
+              if 'apk' in u.lower() or 'download' in u.lower():
+                  urls.append(u)
+          for u in sorted(set(urls)):
+              print(u[:1000])
+          PY
+      - name: Upload page for inspection
+        uses: actions/upload-artifact@v4
+        with:
+          name: tiktok-download-page
+          path: tiktok-download.html
