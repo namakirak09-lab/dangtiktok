@@ -64,6 +64,7 @@ try {
           headless: true,
           executablePath: chromePath,
           args: [
+            '--disable-blink-features=AutomationControlled',
             '--disable-dev-shm-usage',
             '--window-size=1280,800',
             '--lang=vi-VN',

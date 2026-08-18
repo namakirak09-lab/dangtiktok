@@ -1,0 +1,16 @@
+﻿2026-08-18T13:10:00.9208689Z ##[group]Run $candidates = @(
+2026-08-18T13:10:00.9209087Z [36;1m$candidates = @([0m
+2026-08-18T13:10:00.9209432Z [36;1m  "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",[0m
+2026-08-18T13:10:00.9209946Z [36;1m  "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"[0m
+2026-08-18T13:10:00.9210306Z [36;1m)[0m
+2026-08-18T13:10:00.9210665Z [36;1m$chrome = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1[0m
+2026-08-18T13:10:00.9211244Z [36;1mif (-not $chrome) { throw 'Google Chrome not found on windows-latest runner' }[0m
+2026-08-18T13:10:00.9211807Z [36;1m"CHROME_BIN=$chrome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append[0m
+2026-08-18T13:10:00.9279928Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:10:00.9280288Z env:
+2026-08-18T13:10:00.9280517Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:10:00.9280848Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:10:00.9281308Z   SUPABASE_URL: ***
+2026-08-18T13:10:00.9282628Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:10:00.9283068Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:10:00.9283297Z ##[endgroup]

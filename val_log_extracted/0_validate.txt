@@ -1,0 +1,226 @@
+﻿2026-08-18T13:09:41.2883688Z Current runner version: '2.336.0'
+2026-08-18T13:09:41.2909271Z ##[group]Runner Image Provisioner
+2026-08-18T13:09:41.2910367Z Hosted Compute Agent
+2026-08-18T13:09:41.2911009Z Version: 20260729.566
+2026-08-18T13:09:41.2911605Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+2026-08-18T13:09:41.2912274Z Build Date: 2026-07-29T19:17:02Z
+2026-08-18T13:09:41.2912961Z Worker ID: {9927cfb2-3d72-44d0-9d10-a9c04a92da3e}
+2026-08-18T13:09:41.2913657Z Azure Region: westus2
+2026-08-18T13:09:41.2914204Z ##[endgroup]
+2026-08-18T13:09:41.2915665Z ##[group]Operating System
+2026-08-18T13:09:41.2916294Z Microsoft Windows Server 2025
+2026-08-18T13:09:41.2916878Z 10.0.26100
+2026-08-18T13:09:41.2917358Z Datacenter
+2026-08-18T13:09:41.2917863Z ##[endgroup]
+2026-08-18T13:09:41.2918376Z ##[group]Runner Image
+2026-08-18T13:09:41.2918912Z Image: windows-2025-vs2026
+2026-08-18T13:09:41.2919478Z Version: 20260810.198.2
+2026-08-18T13:09:41.2920959Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260810.198/images/windows/Windows2025-VS2026-Readme.md
+2026-08-18T13:09:41.2922540Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260810.198
+2026-08-18T13:09:41.2923461Z ##[endgroup]
+2026-08-18T13:09:41.2924474Z ##[group]GITHUB_TOKEN Permissions
+2026-08-18T13:09:41.2926271Z Contents: read
+2026-08-18T13:09:41.2927168Z Metadata: read
+2026-08-18T13:09:41.2927706Z ##[endgroup]
+2026-08-18T13:09:41.2930591Z Secret source: Actions
+2026-08-18T13:09:41.2931603Z Prepare workflow directory
+2026-08-18T13:09:41.3506862Z Prepare all required actions
+2026-08-18T13:09:41.3554887Z Getting action download info
+2026-08-18T13:09:41.7094048Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-08-18T13:09:41.8293281Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-08-18T13:09:42.1200500Z Complete job name: validate
+2026-08-18T13:09:42.2463049Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-08-18T13:09:42.2472670Z ##[group]Run actions/checkout@v4
+2026-08-18T13:09:42.2473575Z with:
+2026-08-18T13:09:42.2474057Z   repository: namakirak09-lab/dangtiktok
+2026-08-18T13:09:42.2478154Z   token: ***
+2026-08-18T13:09:42.2478607Z   ssh-strict: true
+2026-08-18T13:09:42.2479049Z   ssh-user: git
+2026-08-18T13:09:42.2479497Z   persist-credentials: true
+2026-08-18T13:09:42.2479988Z   clean: true
+2026-08-18T13:09:42.2480514Z   sparse-checkout-cone-mode: true
+2026-08-18T13:09:42.2481336Z   fetch-depth: 1
+2026-08-18T13:09:42.2481786Z   fetch-tags: false
+2026-08-18T13:09:42.2482257Z   show-progress: true
+2026-08-18T13:09:42.2482710Z   lfs: false
+2026-08-18T13:09:42.2483176Z   submodules: false
+2026-08-18T13:09:42.2483644Z   set-safe-directory: true
+2026-08-18T13:09:42.2484164Z   allow-unsafe-pr-checkout: false
+2026-08-18T13:09:42.2484996Z env:
+2026-08-18T13:09:42.2485502Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:09:42.2486191Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:09:42.2486997Z   SUPABASE_URL: ***
+2026-08-18T13:09:42.2489538Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:09:42.2490957Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:09:42.2491494Z ##[endgroup]
+2026-08-18T13:09:42.3961266Z Syncing repository: namakirak09-lab/dangtiktok
+2026-08-18T13:09:42.3967491Z ##[group]Getting Git version info
+2026-08-18T13:09:42.3969045Z Working directory is 'D:\a\dangtiktok\dangtiktok'
+2026-08-18T13:09:42.4750678Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-08-18T13:09:42.6195055Z git version 2.55.0.windows.3
+2026-08-18T13:09:42.6247038Z ##[endgroup]
+2026-08-18T13:09:42.6268404Z Temporarily overriding HOME='D:\a\_temp\5e348e26-2bdf-48ac-924c-2c29b8d43543' before making global git config changes
+2026-08-18T13:09:42.6274244Z Adding repository directory to the temporary git global config as a safe directory
+2026-08-18T13:09:42.6282749Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\dangtiktok\dangtiktok
+2026-08-18T13:09:42.6578510Z Deleting the contents of 'D:\a\dangtiktok\dangtiktok'
+2026-08-18T13:09:42.6584474Z ##[group]Initializing the repository
+2026-08-18T13:09:42.6593353Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\dangtiktok\dangtiktok
+2026-08-18T13:09:42.7040279Z Initialized empty Git repository in D:/a/dangtiktok/dangtiktok/.git/
+2026-08-18T13:09:42.7087609Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/namakirak09-lab/dangtiktok
+2026-08-18T13:09:42.7471325Z ##[endgroup]
+2026-08-18T13:09:42.7472577Z ##[group]Disabling automatic garbage collection
+2026-08-18T13:09:42.7474132Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-08-18T13:09:42.7752001Z ##[endgroup]
+2026-08-18T13:09:42.7752714Z ##[group]Setting up auth
+2026-08-18T13:09:42.7764942Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-08-18T13:09:42.8051415Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-08-18T13:09:43.6641923Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-08-18T13:09:43.6926607Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-08-18T13:09:44.2505604Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-08-18T13:09:44.2874505Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-08-18T13:09:44.8208126Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-08-18T13:09:44.8504600Z ##[endgroup]
+2026-08-18T13:09:44.8505172Z ##[group]Fetching the repository
+2026-08-18T13:09:44.8516921Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +aa832ed6b3e1c16b1cb70d56fd0e412b8eb82f25:refs/remotes/origin/main
+2026-08-18T13:09:45.4750576Z From https://github.com/namakirak09-lab/dangtiktok
+2026-08-18T13:09:45.4751884Z  * [new ref]         aa832ed6b3e1c16b1cb70d56fd0e412b8eb82f25 -> origin/main
+2026-08-18T13:09:45.4791699Z ##[endgroup]
+2026-08-18T13:09:45.4792783Z ##[group]Determining the checkout info
+2026-08-18T13:09:45.4794434Z ##[endgroup]
+2026-08-18T13:09:45.4804924Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-08-18T13:09:45.5164468Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-08-18T13:09:45.5469900Z ##[group]Checking out the ref
+2026-08-18T13:09:45.5479513Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force -B main refs/remotes/origin/main
+2026-08-18T13:09:45.6108958Z Switched to a new branch 'main'
+2026-08-18T13:09:45.6136776Z branch 'main' set up to track 'origin/main'.
+2026-08-18T13:09:45.6177251Z ##[endgroup]
+2026-08-18T13:09:45.6485087Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-08-18T13:09:45.6742862Z aa832ed6b3e1c16b1cb70d56fd0e412b8eb82f25
+2026-08-18T13:09:45.7229010Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-08-18T13:09:45.7231667Z ##[group]Run actions/setup-node@v4
+2026-08-18T13:09:45.7231950Z with:
+2026-08-18T13:09:45.7232136Z   node-version: 20
+2026-08-18T13:09:45.7232378Z   always-auth: false
+2026-08-18T13:09:45.7232604Z   check-latest: false
+2026-08-18T13:09:45.7235123Z   token: ***
+2026-08-18T13:09:45.7235321Z env:
+2026-08-18T13:09:45.7235549Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:09:45.7235917Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:09:45.7236314Z   SUPABASE_URL: ***
+2026-08-18T13:09:45.7237650Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:09:45.7238110Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:09:45.7238386Z ##[endgroup]
+2026-08-18T13:09:45.8891301Z Attempting to download 20...
+2026-08-18T13:09:45.9085394Z (node:5108) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-08-18T13:09:45.9086166Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-18T13:09:46.6046621Z Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-win32-x64.7z
+2026-08-18T13:09:47.1836326Z Extracting ...
+2026-08-18T13:09:49.5165872Z Adding to the cache ...
+2026-08-18T13:09:52.6706928Z ##[group]Environment details
+2026-08-18T13:09:53.8965260Z node: v20.20.2
+2026-08-18T13:09:53.8965641Z npm: 10.8.2
+2026-08-18T13:09:53.8966180Z yarn: 1.22.22
+2026-08-18T13:09:53.8966846Z ##[endgroup]
+2026-08-18T13:09:53.9272587Z ##[group]Run npm install --no-audit --no-fund
+2026-08-18T13:09:53.9273036Z [36;1mnpm install --no-audit --no-fund[0m
+2026-08-18T13:09:53.9401932Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:09:53.9402306Z env:
+2026-08-18T13:09:53.9402540Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:09:53.9402879Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:09:53.9403478Z   SUPABASE_URL: ***
+2026-08-18T13:09:53.9404813Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:09:53.9405248Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:09:53.9405484Z ##[endgroup]
+2026-08-18T13:09:55.0451602Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0452175Z npm warn EBADENGINE   package: '@supabase/auth-js@2.112.3',
+2026-08-18T13:09:55.0452642Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0453109Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0453542Z npm warn EBADENGINE }
+2026-08-18T13:09:55.0453844Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0454266Z npm warn EBADENGINE   package: '@supabase/functions-js@2.112.3',
+2026-08-18T13:09:55.0454914Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0455699Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0456335Z npm warn EBADENGINE }
+2026-08-18T13:09:55.0456651Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0457075Z npm warn EBADENGINE   package: '@supabase/postgrest-js@2.112.3',
+2026-08-18T13:09:55.0457509Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0457938Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0458301Z npm warn EBADENGINE }
+2026-08-18T13:09:55.0459183Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0459725Z npm warn EBADENGINE   package: '@supabase/realtime-js@2.112.3',
+2026-08-18T13:09:55.0460170Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0460613Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0460963Z npm warn EBADENGINE }
+2026-08-18T13:09:55.0463440Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0464225Z npm warn EBADENGINE   package: '@supabase/storage-js@2.112.3',
+2026-08-18T13:09:55.0465075Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0466291Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0467294Z npm warn EBADENGINE }
+2026-08-18T13:09:55.0467881Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T13:09:55.0468739Z npm warn EBADENGINE   package: '@supabase/supabase-js@2.112.3',
+2026-08-18T13:09:55.0469575Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T13:09:55.0470412Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T13:09:55.0471074Z npm warn EBADENGINE }
+2026-08-18T13:10:00.7569323Z 
+2026-08-18T13:10:00.7569858Z added 84 packages in 6s
+2026-08-18T13:10:00.9208714Z ##[group]Run $candidates = @(
+2026-08-18T13:10:00.9209090Z [36;1m$candidates = @([0m
+2026-08-18T13:10:00.9209435Z [36;1m  "$env:ProgramFiles\Google\Chrome\Application\chrome.exe",[0m
+2026-08-18T13:10:00.9209948Z [36;1m  "${env:ProgramFiles(x86)}\Google\Chrome\Application\chrome.exe"[0m
+2026-08-18T13:10:00.9210308Z [36;1m)[0m
+2026-08-18T13:10:00.9210675Z [36;1m$chrome = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1[0m
+2026-08-18T13:10:00.9211246Z [36;1mif (-not $chrome) { throw 'Google Chrome not found on windows-latest runner' }[0m
+2026-08-18T13:10:00.9211809Z [36;1m"CHROME_BIN=$chrome" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append[0m
+2026-08-18T13:10:00.9279936Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:10:00.9280291Z env:
+2026-08-18T13:10:00.9280520Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:10:00.9280886Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:10:00.9281310Z   SUPABASE_URL: ***
+2026-08-18T13:10:00.9282631Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:10:00.9283070Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:10:00.9283299Z ##[endgroup]
+2026-08-18T13:10:01.3284002Z ##[group]Run node automation/validate-session.mjs
+2026-08-18T13:10:01.3284426Z [36;1mnode automation/validate-session.mjs[0m
+2026-08-18T13:10:01.3352753Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:10:01.3353109Z env:
+2026-08-18T13:10:01.3353329Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:10:01.3353654Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:10:01.3354095Z   SUPABASE_URL: ***
+2026-08-18T13:10:01.3355559Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:10:01.3356168Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:10:01.3356509Z   CHROME_BIN: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-08-18T13:10:01.3356855Z ##[endgroup]
+2026-08-18T13:10:17.6762189Z Session validation failed: NeedsAttention: Phiên TikTok đã hết hạn. Hãy cập nhật lại phiên từ Chrome.
+2026-08-18T13:10:17.6763669Z     at assertNoChallenge (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:22:51)
+2026-08-18T13:10:17.6765181Z     at async openPhotoComposer (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:77:7)
+2026-08-18T13:10:17.6765999Z     at async validateTikTokSession (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:55:20)
+2026-08-18T13:10:17.6766896Z     at async file:///D:/a/dangtiktok/dangtiktok/automation/validate-session.mjs:45:18
+2026-08-18T13:10:19.1950035Z ##[error]Process completed with exit code 1.
+2026-08-18T13:10:19.2115049Z ##[group]Run node automation/runner-failsafe.mjs
+2026-08-18T13:10:19.2115485Z [36;1mnode automation/runner-failsafe.mjs[0m
+2026-08-18T13:10:19.2184028Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:10:19.2184666Z env:
+2026-08-18T13:10:19.2184895Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:10:19.2185431Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:10:19.2185890Z   SUPABASE_URL: ***
+2026-08-18T13:10:19.2187249Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:10:19.2187698Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:10:19.2188033Z   CHROME_BIN: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-08-18T13:10:19.2188599Z ##[endgroup]
+2026-08-18T13:10:20.0740304Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-08-18T13:10:20.0741678Z Post job cleanup.
+2026-08-18T13:10:20.2790135Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-08-18T13:10:20.3056571Z git version 2.55.0.windows.3
+2026-08-18T13:10:20.3127397Z Temporarily overriding HOME='D:\a\_temp\9b005c07-110f-42cf-adab-10f9d9899ed6' before making global git config changes
+2026-08-18T13:10:20.3128261Z Adding repository directory to the temporary git global config as a safe directory
+2026-08-18T13:10:20.3138538Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\dangtiktok\dangtiktok
+2026-08-18T13:10:20.3436527Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-08-18T13:10:20.3723112Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-08-18T13:10:20.9172652Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-08-18T13:10:20.9422281Z http.https://github.com/.extraheader
+2026-08-18T13:10:20.9462124Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-08-18T13:10:20.9745902Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-08-18T13:10:21.5168191Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-08-18T13:10:21.5467218Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-08-18T13:10:22.0775658Z Cleaning up orphan processes
+2026-08-18T13:10:22.1165004Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

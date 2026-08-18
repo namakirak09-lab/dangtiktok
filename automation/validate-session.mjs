@@ -37,7 +37,7 @@ try {
     ...baseContextOptions(profile),
     headless: true,
     executablePath: chromePath,
-    args: ['--disable-dev-shm-usage', '--lang=vi-VN', '--window-size=1280,800'],
+    args: ['--disable-blink-features=AutomationControlled', '--disable-dev-shm-usage', '--lang=vi-VN', '--window-size=1280,800'],
   })
   await seedPersistentContext(context, payload.storageState, payload.sessionStorage)
   const page = context.pages()[0] || await context.newPage()

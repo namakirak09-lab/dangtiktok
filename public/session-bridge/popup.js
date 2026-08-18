@@ -66,7 +66,8 @@ btn.addEventListener('click', async () => {
     const active = tabs.find((t) => t.active) || tabs[0]
     if (!active?.id) throw new Error('Không đọc được tab TikTok.')
 
-    const cookies = await chrome.cookies.getAll({ domain: 'tiktok.com' })
+    const allCookies = await chrome.cookies.getAll({})
+    const cookies = allCookies.filter((c) => /(^|\.)tiktok\.com$/i.test(String(c.domain || '')))
     if (!cookies.length) throw new Error('Không thấy cookie TikTok. Hãy chắc chắn ông đã đăng nhập.')
     const authCookie = cookies.some((c) => /^(sessionid|sessionid_ss|sid_tt|sid_guard|uid_tt|uid_tt_ss)$/i.test(c.name))
     if (!authCookie) throw new Error('Chrome chưa có cookie đăng nhập TikTok. Hãy đăng nhập xong rồi tải lại tiktok.com trước khi xuất phiên.')

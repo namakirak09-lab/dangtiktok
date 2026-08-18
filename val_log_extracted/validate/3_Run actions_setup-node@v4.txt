@@ -1,0 +1,25 @@
+﻿2026-08-18T13:09:45.7228932Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-08-18T13:09:45.7231662Z ##[group]Run actions/setup-node@v4
+2026-08-18T13:09:45.7231946Z with:
+2026-08-18T13:09:45.7232133Z   node-version: 20
+2026-08-18T13:09:45.7232376Z   always-auth: false
+2026-08-18T13:09:45.7232601Z   check-latest: false
+2026-08-18T13:09:45.7235120Z   token: ***
+2026-08-18T13:09:45.7235318Z env:
+2026-08-18T13:09:45.7235545Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:09:45.7235914Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:09:45.7236311Z   SUPABASE_URL: ***
+2026-08-18T13:09:45.7237646Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:09:45.7238107Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:09:45.7238341Z ##[endgroup]
+2026-08-18T13:09:45.8891266Z Attempting to download 20...
+2026-08-18T13:09:45.9085368Z (node:5108) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-08-18T13:09:45.9086161Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-18T13:09:46.6046575Z Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-win32-x64.7z
+2026-08-18T13:09:47.1836286Z Extracting ...
+2026-08-18T13:09:49.5165836Z Adding to the cache ...
+2026-08-18T13:09:52.6706889Z ##[group]Environment details
+2026-08-18T13:09:53.8965217Z node: v20.20.2
+2026-08-18T13:09:53.8965636Z npm: 10.8.2
+2026-08-18T13:09:53.8966175Z yarn: 1.22.22
+2026-08-18T13:09:53.8966839Z ##[endgroup]

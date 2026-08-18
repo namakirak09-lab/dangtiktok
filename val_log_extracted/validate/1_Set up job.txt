@@ -1,0 +1,31 @@
+﻿2026-08-18T13:09:41.2865820Z Current runner version: '2.336.0'
+2026-08-18T13:09:41.2909242Z ##[group]Runner Image Provisioner
+2026-08-18T13:09:41.2910357Z Hosted Compute Agent
+2026-08-18T13:09:41.2911005Z Version: 20260729.566
+2026-08-18T13:09:41.2911602Z Commit: cf7153fe6e25b664e8693c24944bf2b00355d109
+2026-08-18T13:09:41.2912271Z Build Date: 2026-07-29T19:17:02Z
+2026-08-18T13:09:41.2912957Z Worker ID: {9927cfb2-3d72-44d0-9d10-a9c04a92da3e}
+2026-08-18T13:09:41.2913654Z Azure Region: westus2
+2026-08-18T13:09:41.2914201Z ##[endgroup]
+2026-08-18T13:09:41.2915652Z ##[group]Operating System
+2026-08-18T13:09:41.2916291Z Microsoft Windows Server 2025
+2026-08-18T13:09:41.2916875Z 10.0.26100
+2026-08-18T13:09:41.2917356Z Datacenter
+2026-08-18T13:09:41.2917860Z ##[endgroup]
+2026-08-18T13:09:41.2918373Z ##[group]Runner Image
+2026-08-18T13:09:41.2918909Z Image: windows-2025-vs2026
+2026-08-18T13:09:41.2919475Z Version: 20260810.198.2
+2026-08-18T13:09:41.2920596Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260810.198/images/windows/Windows2025-VS2026-Readme.md
+2026-08-18T13:09:41.2922536Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260810.198
+2026-08-18T13:09:41.2923458Z ##[endgroup]
+2026-08-18T13:09:41.2924470Z ##[group]GITHUB_TOKEN Permissions
+2026-08-18T13:09:41.2926253Z Contents: read
+2026-08-18T13:09:41.2927163Z Metadata: read
+2026-08-18T13:09:41.2927703Z ##[endgroup]
+2026-08-18T13:09:41.2930570Z Secret source: Actions
+2026-08-18T13:09:41.2931599Z Prepare workflow directory
+2026-08-18T13:09:41.3506836Z Prepare all required actions
+2026-08-18T13:09:41.3554860Z Getting action download info
+2026-08-18T13:09:41.7094006Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-08-18T13:09:41.8293251Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-08-18T13:09:42.1200473Z Complete job name: validate

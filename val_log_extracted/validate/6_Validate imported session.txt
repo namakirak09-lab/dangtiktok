@@ -1,0 +1,17 @@
+﻿2026-08-18T13:10:01.3283967Z ##[group]Run node automation/validate-session.mjs
+2026-08-18T13:10:01.3284422Z [36;1mnode automation/validate-session.mjs[0m
+2026-08-18T13:10:01.3352744Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-08-18T13:10:01.3353106Z env:
+2026-08-18T13:10:01.3353326Z   RUNNER_JOB_ID: 0f07b772-72f6-49c4-942a-0a38352ecf90
+2026-08-18T13:10:01.3353652Z   ACCOUNT_ID: 1ce428fd-defa-4520-ad5d-a065ab7aa914
+2026-08-18T13:10:01.3354092Z   SUPABASE_URL: ***
+2026-08-18T13:10:01.3355552Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T13:10:01.3356165Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T13:10:01.3356506Z   CHROME_BIN: C:\Program Files\Google\Chrome\Application\chrome.exe
+2026-08-18T13:10:01.3356853Z ##[endgroup]
+2026-08-18T13:10:17.6762145Z Session validation failed: NeedsAttention: Phiên TikTok đã hết hạn. Hãy cập nhật lại phiên từ Chrome.
+2026-08-18T13:10:17.6763569Z     at assertNoChallenge (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:22:51)
+2026-08-18T13:10:17.6765174Z     at async openPhotoComposer (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:77:7)
+2026-08-18T13:10:17.6765996Z     at async validateTikTokSession (file:///D:/a/dangtiktok/dangtiktok/automation/lib/tiktok-ui.mjs:55:20)
+2026-08-18T13:10:17.6766892Z     at async file:///D:/a/dangtiktok/dangtiktok/automation/validate-session.mjs:45:18
+2026-08-18T13:10:19.1950012Z ##[error]Process completed with exit code 1.
