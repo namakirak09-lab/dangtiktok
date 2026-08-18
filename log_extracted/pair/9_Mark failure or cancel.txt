@@ -1,0 +1,23 @@
+﻿2026-08-18T09:38:13.3329605Z ##[group]Run PAIR_STATUS=failed PAIR_ERROR="Runner ghép phiên dừng hoặc gặp sự cố. Kiểm tra GitHub Actions." node automation/update-pairing.mjs || true
+2026-08-18T09:38:13.3330691Z [36;1mPAIR_STATUS=failed PAIR_ERROR="Runner ghép phiên dừng hoặc gặp sự cố. Kiểm tra GitHub Actions." node automation/update-pairing.mjs || true[0m
+2026-08-18T09:38:13.3371164Z shell: /usr/bin/bash -e {0}
+2026-08-18T09:38:13.3371433Z env:
+2026-08-18T09:38:13.3371706Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:38:13.3372219Z   SUPABASE_URL: ***
+2026-08-18T09:38:13.3372568Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:38:13.3373026Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:38:13.3373278Z   DISPLAY: :99
+2026-08-18T09:38:13.3373507Z   CHROME_BIN: /usr/bin/google-chrome
+2026-08-18T09:38:13.3373807Z   PAIR_VIEW_PASSWORD: fb382d936e2e
+2026-08-18T09:38:13.3374339Z   PAIR_LIVE_URL: https://towers-daisy-totals-gear.trycloudflare.com/vnc.html?autoconnect=true&resize=scale
+2026-08-18T09:38:13.3374850Z ##[endgroup]
+2026-08-18T09:38:13.4899563Z file:///home/runner/work/dangtiktok/dangtiktok/automation/lib/supabase.mjs:13
+2026-08-18T09:38:13.4900785Z   if (!res.ok) throw new Error(`Supabase REST ${res.status}: ${(await res.text()).slice(0, 500)}`)
+2026-08-18T09:38:13.4901558Z                      ^
+2026-08-18T09:38:13.4901788Z 
+2026-08-18T09:38:13.4902769Z Error: Supabase REST 401: {"message":"Unregistered API key","hint":"Double check the provided API key as it is not registered for this project."}
+2026-08-18T09:38:13.4904185Z     at rest (file:///home/runner/work/dangtiktok/dangtiktok/automation/lib/supabase.mjs:13:22)
+2026-08-18T09:38:13.4905202Z     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-08-18T09:38:13.4905868Z     at async file:///home/runner/work/dangtiktok/dangtiktok/automation/update-pairing.mjs:12:1
+2026-08-18T09:38:13.4906247Z 
+2026-08-18T09:38:13.4906350Z Node.js v20.20.2

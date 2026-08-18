@@ -1,0 +1,8 @@
+2026-08-18T09:37:28.6760000Z Evaluating pair.if
+2026-08-18T09:37:28.6760000Z Evaluating: success()
+2026-08-18T09:37:28.6760000Z Result: true
+2026-08-18T09:37:28.8690000Z Requested labels: ubuntu-latest
+2026-08-18T09:37:28.8690000Z Job defined at: namakirak09-lab/dangtiktok/.github/workflows/pair-tiktok.yml@refs/heads/main
+2026-08-18T09:37:28.8690000Z Waiting for a runner to pick up this job...
+2026-08-18T09:37:28.9050000Z Job is waiting for a hosted runner to come online.
+2026-08-18T09:37:28.9060000Z Job is about to start running on the hosted runner: GitHub Actions 1000000298

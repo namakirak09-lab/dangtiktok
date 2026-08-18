@@ -1,0 +1,26 @@
+﻿2026-08-18T09:37:33.5253824Z Node 20 is being deprecated. This workflow is running with Node 24 by default. If you need to temporarily use Node 20, you can set the ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true environment variable. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+2026-08-18T09:37:33.5256082Z ##[group]Run actions/setup-node@v4
+2026-08-18T09:37:33.5256413Z with:
+2026-08-18T09:37:33.5256675Z   node-version: 20
+2026-08-18T09:37:33.5256949Z   always-auth: false
+2026-08-18T09:37:33.5257231Z   check-latest: false
+2026-08-18T09:37:33.5259969Z   token: ***
+2026-08-18T09:37:33.5260254Z env:
+2026-08-18T09:37:33.5260582Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:37:33.5261064Z   SUPABASE_URL: ***
+2026-08-18T09:37:33.5261461Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:37:33.5261983Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:37:33.5262294Z   DISPLAY: :99
+2026-08-18T09:37:33.5262551Z ##[endgroup]
+2026-08-18T09:37:33.6707136Z Attempting to download 20...
+2026-08-18T09:37:33.6806281Z (node:2173) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-08-18T09:37:33.6807756Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-08-18T09:37:34.2407425Z Acquiring 20.20.2 - x64 from https://github.com/actions/node-versions/releases/download/20.20.2-23521894959/node-20.20.2-linux-x64.tar.gz
+2026-08-18T09:37:34.5866537Z Extracting ...
+2026-08-18T09:37:34.5979683Z [command]/usr/bin/tar xz --strip 1 --warning=no-unknown-keyword --overwrite -C /home/runner/work/_temp/57b0a4ab-f14c-4cf0-b972-8847808a27bd -f /home/runner/work/_temp/9432ea3a-07c4-449f-890d-a3359b01516c
+2026-08-18T09:37:35.6863265Z Adding to the cache ...
+2026-08-18T09:37:37.2327351Z ##[group]Environment details
+2026-08-18T09:37:37.5599637Z node: v20.20.2
+2026-08-18T09:37:37.5600228Z npm: 10.8.2
+2026-08-18T09:37:37.5605260Z yarn: 1.22.22
+2026-08-18T09:37:37.5606025Z ##[endgroup]

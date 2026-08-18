@@ -1,0 +1,29 @@
+﻿2026-08-18T09:38:07.4070344Z ##[group]Run export PAIR_VIEW_PASSWORD="$(openssl rand -hex 6)"
+2026-08-18T09:38:07.4070861Z [36;1mexport PAIR_VIEW_PASSWORD="$(openssl rand -hex 6)"[0m
+2026-08-18T09:38:07.4071307Z [36;1mecho "PAIR_VIEW_PASSWORD=$PAIR_VIEW_PASSWORD" >> "$GITHUB_ENV"[0m
+2026-08-18T09:38:07.4071776Z [36;1mXvfb :99 -screen 0 1280x800x24 -ac > /tmp/xvfb.log 2>&1 &[0m
+2026-08-18T09:38:07.4072113Z [36;1msleep 1[0m
+2026-08-18T09:38:07.4072454Z [36;1mx11vnc -storepasswd "$PAIR_VIEW_PASSWORD" /tmp/vnc.pass >/dev/null[0m
+2026-08-18T09:38:07.4073077Z [36;1mx11vnc -display :99 -rfbauth /tmp/vnc.pass -forever -shared -rfbport 5900 -noxdamage > /tmp/x11vnc.log 2>&1 &[0m
+2026-08-18T09:38:07.4073727Z [36;1mwebsockify --web=/usr/share/novnc/ 6080 localhost:5900 > /tmp/novnc.log 2>&1 &[0m
+2026-08-18T09:38:07.4074353Z [36;1mcloudflared tunnel --no-autoupdate --url http://127.0.0.1:6080 > /tmp/cloudflared.log 2>&1 &[0m
+2026-08-18T09:38:07.4074823Z [36;1mfor i in $(seq 1 45); do[0m
+2026-08-18T09:38:07.4075284Z [36;1m  URL=$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' /tmp/cloudflared.log | head -n1 || true)[0m
+2026-08-18T09:38:07.4075778Z [36;1m  if [ -n "$URL" ]; then[0m
+2026-08-18T09:38:07.4076191Z [36;1m    echo "PAIR_LIVE_URL=$URL/vnc.html?autoconnect=true&resize=scale" >> "$GITHUB_ENV"[0m
+2026-08-18T09:38:07.4076615Z [36;1m    exit 0[0m
+2026-08-18T09:38:07.4076847Z [36;1m  fi[0m
+2026-08-18T09:38:07.4077050Z [36;1m  sleep 1[0m
+2026-08-18T09:38:07.4077265Z [36;1mdone[0m
+2026-08-18T09:38:07.4077472Z [36;1mcat /tmp/cloudflared.log[0m
+2026-08-18T09:38:07.4077721Z [36;1mexit 1[0m
+2026-08-18T09:38:07.4119942Z shell: /usr/bin/bash -e {0}
+2026-08-18T09:38:07.4120213Z env:
+2026-08-18T09:38:07.4120466Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:38:07.4121025Z   SUPABASE_URL: ***
+2026-08-18T09:38:07.4121383Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:38:07.4121829Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:38:07.4122081Z   DISPLAY: :99
+2026-08-18T09:38:07.4122305Z   CHROME_BIN: /usr/bin/google-chrome
+2026-08-18T09:38:07.4122599Z ##[endgroup]
+2026-08-18T09:38:08.5675007Z stored passwd in file: /tmp/vnc.pass

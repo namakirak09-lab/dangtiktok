@@ -195,6 +195,12 @@ input:focus, textarea:focus, select:focus { border-color: #7db99d; box-shadow: 0
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* Accounts */
+
+.session-bridge-card { display:flex; align-items:center; justify-content:space-between; gap:18px; padding:16px 18px; margin-bottom:18px; }
+.session-bridge-card > div { display:grid; gap:4px; }
+.session-bridge-card span { color:var(--muted); font-size:12px; line-height:1.45; }
+@media (max-width: 760px) { .session-bridge-card { align-items:stretch; flex-direction:column; } }
+
 .account-grid-page { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
 .account-card, .add-account-card { padding: 18px; min-height: 214px; }
 .account-main { display: flex; gap: 12px; align-items: center; }

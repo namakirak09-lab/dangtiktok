@@ -1,0 +1,12 @@
+﻿2026-08-18T09:37:40.5403307Z ##[group]Run CHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"
+2026-08-18T09:37:40.5404135Z [36;1mCHROME="$(command -v google-chrome || command -v google-chrome-stable || command -v chromium || true)"[0m
+2026-08-18T09:37:40.5404735Z [36;1mif [ -z "$CHROME" ]; then echo "Chrome/Chromium not found"; exit 1; fi[0m
+2026-08-18T09:37:40.5405140Z [36;1mecho "CHROME_BIN=$CHROME" >> "$GITHUB_ENV"[0m
+2026-08-18T09:37:40.5448729Z shell: /usr/bin/bash -e {0}
+2026-08-18T09:37:40.5449009Z env:
+2026-08-18T09:37:40.5449271Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:37:40.5449812Z   SUPABASE_URL: ***
+2026-08-18T09:37:40.5450154Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:37:40.5450599Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:37:40.5450857Z   DISPLAY: :99
+2026-08-18T09:37:40.5451073Z ##[endgroup]

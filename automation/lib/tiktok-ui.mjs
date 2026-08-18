@@ -18,8 +18,8 @@ async function visibleText(page) {
 
 export async function assertNoChallenge(page) {
   const text = await visibleText(page)
-  if (TEXT.challenge.test(text)) throw new NeedsAttention('TikTok đang yêu cầu CAPTCHA/2FA/xác minh. Mở ghép phiên và tự xác nhận một lần.')
-  if (/\/login(\/|\?|$)/i.test(page.url())) throw new NeedsAttention('Phiên TikTok đã hết hạn. Cần ghép lại tài khoản.')
+  if (TEXT.challenge.test(text)) throw new NeedsAttention('TikTok yêu cầu xác nhận phiên. Hãy cập nhật lại phiên từ Chrome.')
+  if (/\/login(\/|\?|$)/i.test(page.url())) throw new NeedsAttention('Phiên TikTok đã hết hạn. Hãy cập nhật lại phiên từ Chrome.')
 }
 
 async function imageFileInput(page) {

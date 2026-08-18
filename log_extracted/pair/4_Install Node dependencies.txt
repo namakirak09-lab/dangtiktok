@@ -1,0 +1,42 @@
+﻿2026-08-18T09:37:37.5777756Z ##[group]Run npm install --no-audit --no-fund
+2026-08-18T09:37:37.5778437Z [36;1mnpm install --no-audit --no-fund[0m
+2026-08-18T09:37:37.5826036Z shell: /usr/bin/bash -e {0}
+2026-08-18T09:37:37.5826349Z env:
+2026-08-18T09:37:37.5826626Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:37:37.5827192Z   SUPABASE_URL: ***
+2026-08-18T09:37:37.5827594Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:37:37.5828277Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:37:37.5828540Z   DISPLAY: :99
+2026-08-18T09:37:37.5828760Z ##[endgroup]
+2026-08-18T09:37:37.9294589Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9295971Z npm warn EBADENGINE   package: '@supabase/auth-js@2.112.3',
+2026-08-18T09:37:37.9296933Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9297886Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9298771Z npm warn EBADENGINE }
+2026-08-18T09:37:37.9299296Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9300132Z npm warn EBADENGINE   package: '@supabase/functions-js@2.112.3',
+2026-08-18T09:37:37.9300941Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9301754Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9302416Z npm warn EBADENGINE }
+2026-08-18T09:37:37.9302973Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9303774Z npm warn EBADENGINE   package: '@supabase/postgrest-js@2.112.3',
+2026-08-18T09:37:37.9304564Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9305367Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9306010Z npm warn EBADENGINE }
+2026-08-18T09:37:37.9306551Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9307309Z npm warn EBADENGINE   package: '@supabase/realtime-js@2.112.3',
+2026-08-18T09:37:37.9308851Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9309664Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9310300Z npm warn EBADENGINE }
+2026-08-18T09:37:37.9310804Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9311520Z npm warn EBADENGINE   package: '@supabase/storage-js@2.112.3',
+2026-08-18T09:37:37.9312276Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9313077Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9313684Z npm warn EBADENGINE }
+2026-08-18T09:37:37.9314216Z npm warn EBADENGINE Unsupported engine {
+2026-08-18T09:37:37.9315032Z npm warn EBADENGINE   package: '@supabase/supabase-js@2.112.3',
+2026-08-18T09:37:37.9315788Z npm warn EBADENGINE   required: { node: '>=22.0.0' },
+2026-08-18T09:37:37.9316560Z npm warn EBADENGINE   current: { node: 'v20.20.2', npm: '10.8.2' }
+2026-08-18T09:37:37.9317196Z npm warn EBADENGINE }
+2026-08-18T09:37:40.5212703Z 
+2026-08-18T09:37:40.5213440Z added 85 packages in 3s

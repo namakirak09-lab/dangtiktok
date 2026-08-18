@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>PostFlow Session Bridge</title>
+  <style>
+    body{font:14px system-ui,-apple-system,Segoe UI,sans-serif;width:320px;margin:0;padding:18px;background:#fffdf8;color:#17211b}
+    h1{font-size:18px;margin:0 0 8px}p{line-height:1.45;color:#56605a;margin:0 0 14px}
+    button{width:100%;border:0;border-radius:12px;padding:12px 14px;background:#117a4f;color:#fff;font-weight:700;cursor:pointer}
+    button:disabled{opacity:.55}.status{margin-top:12px;padding:10px 12px;border-radius:10px;background:#f1f5f2;font-size:13px;white-space:pre-wrap}
+    .ok{background:#e8f7ef;color:#0b6a42}.err{background:#fff0ef;color:#a42b24}
+  </style>
+</head>
+<body>
+  <h1>PostFlow Session Bridge</h1>
+  <p>Đăng nhập TikTok bình thường trong Chrome này, mở một tab TikTok rồi bấm nút dưới.</p>
+  <button id="exportBtn">Xuất phiên TikTok</button>
+  <div id="status" class="status">Sẵn sàng.</div>
+  <script src="popup.js"></script>
+</body>
+</html>

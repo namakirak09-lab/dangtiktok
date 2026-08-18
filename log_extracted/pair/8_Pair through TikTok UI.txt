@@ -1,0 +1,25 @@
+﻿2026-08-18T09:38:12.5942397Z ##[group]Run node automation/pair.mjs
+2026-08-18T09:38:12.5942740Z [36;1mnode automation/pair.mjs[0m
+2026-08-18T09:38:12.5983341Z shell: /usr/bin/bash -e {0}
+2026-08-18T09:38:12.5983603Z env:
+2026-08-18T09:38:12.5983853Z   PAIRING_ID: b59091de-59db-41a0-9a47-7a12a2d6c649
+2026-08-18T09:38:12.5984544Z   SUPABASE_URL: ***
+2026-08-18T09:38:12.5984890Z   SUPABASE_SERVICE_ROLE_KEY: ***
+2026-08-18T09:38:12.5985365Z   SESSION_ENCRYPTION_KEY: ***
+2026-08-18T09:38:12.5985625Z   DISPLAY: :99
+2026-08-18T09:38:12.5985852Z   CHROME_BIN: /usr/bin/google-chrome
+2026-08-18T09:38:12.5986137Z   PAIR_VIEW_PASSWORD: fb382d936e2e
+2026-08-18T09:38:12.5986657Z   PAIR_LIVE_URL: https://towers-daisy-totals-gear.trycloudflare.com/vnc.html?autoconnect=true&resize=scale
+2026-08-18T09:38:12.5987166Z ##[endgroup]
+2026-08-18T09:38:13.2552098Z file:///home/runner/work/dangtiktok/dangtiktok/automation/lib/supabase.mjs:13
+2026-08-18T09:38:13.2553270Z   if (!res.ok) throw new Error(`Supabase REST ${res.status}: ${(await res.text()).slice(0, 500)}`)
+2026-08-18T09:38:13.2554182Z                      ^
+2026-08-18T09:38:13.2554399Z 
+2026-08-18T09:38:13.2555319Z Error: Supabase REST 401: {"message":"Unregistered API key","hint":"Double check the provided API key as it is not registered for this project."}
+2026-08-18T09:38:13.2557070Z     at rest (file:///home/runner/work/dangtiktok/dangtiktok/automation/lib/supabase.mjs:13:22)
+2026-08-18T09:38:13.2558304Z     at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2026-08-18T09:38:13.2559307Z     at async getPairing (file:///home/runner/work/dangtiktok/dangtiktok/automation/lib/supabase.mjs:19:16)
+2026-08-18T09:38:13.2560284Z     at async file:///home/runner/work/dangtiktok/dangtiktok/automation/pair.mjs:12:17
+2026-08-18T09:38:13.2560805Z 
+2026-08-18T09:38:13.2560954Z Node.js v20.20.2
+2026-08-18T09:38:13.3275180Z ##[error]Process completed with exit code 1.

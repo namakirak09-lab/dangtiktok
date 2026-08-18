@@ -1,7 +1,7 @@
 {
   "name": "postflow-tiktok-ui-automation",
   "private": true,
-  "version": "2.0.0",
+  "version": "2.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -14,7 +14,6 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@supabase/supabase-js": "^2.56.0",
-    "libsodium-wrappers": "^0.8.4",
     "lucide-react": "^0.468.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
@@ -23,8 +22,8 @@
     "@types/react": "^19.1.10",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.3.4",
-    "playwright-core": "^1.58.2",
     "typescript": "^5.7.2",
-    "vite": "^6.0.5"
+    "vite": "^6.0.5",
+    "playwright-core": "^1.58.2"
   }
 }

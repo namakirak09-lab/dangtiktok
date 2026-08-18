@@ -25,7 +25,7 @@ try {
   } else {
     for (const post of posts) {
       if (post.account?.status !== 'ready') {
-        await patch('posts', `id=eq.${post.id}`, { status: 'needs_attention', failure_reason: 'Tài khoản chưa sẵn sàng. Ghép lại phiên TikTok.' })
+        await patch('posts', `id=eq.${post.id}`, { status: 'needs_attention', failure_reason: 'Tài khoản chưa sẵn sàng. Cập nhật lại phiên từ Chrome.' })
         continue
       }
 
@@ -37,6 +37,7 @@ try {
         const session = await getUiSession(post.account_id)
         if (!session?.encrypted_storage_state) throw new NeedsAttention('Không có phiên TikTok đã lưu.')
         const storageState = decryptJson(session.encrypted_storage_state)
+        const profile = session.client_profile || {}
 
         const assets = [...(post.post_assets || [])].sort((a, b) => a.sort_order - b.sort_order)
         if (!assets.length) throw new Error('Post không có ảnh.')
@@ -56,16 +57,17 @@ try {
             '--no-sandbox',
             '--disable-dev-shm-usage',
             '--window-size=1280,800',
-            '--disable-blink-features=AutomationControlled',
             '--lang=vi-VN',
           ],
         })
+        const viewport = profile.viewport && Number(profile.viewport.width) > 0 && Number(profile.viewport.height) > 0
+          ? { width: Math.min(1600, Math.max(960, Number(profile.viewport.width))), height: Math.min(1000, Math.max(700, Number(profile.viewport.height))) }
+          : { width: 1280, height: 800 }
         const context = await browser.newContext({
           storageState,
-          viewport: { width: 1280, height: 800 },
-          locale: 'vi-VN',
-          timezoneId: 'Asia/Ho_Chi_Minh',
-          deviceScaleFactor: 1,
+          viewport,
+          locale: typeof profile.locale === 'string' && profile.locale ? profile.locale : 'vi-VN',
+          timezoneId: typeof profile.timezoneId === 'string' && profile.timezoneId ? profile.timezoneId : 'Asia/Ho_Chi_Minh',
         })
         const page = await context.newPage()
 
