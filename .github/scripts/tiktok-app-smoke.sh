@@ -25,8 +25,8 @@ echo 'Native bridge:'
 adb shell getprop ro.dalvik.vm.native.bridge
 
 mapfile -t apk_files < "$TIKTOK_APK_LIST"
-test "\${#apk_files[@]}" -gt 0
-adb install-multiple -r "\${apk_files[@]}"
+test "${#apk_files[@]}" -gt 0
+adb install-multiple -r "${apk_files[@]}"
 adb shell pm path "$package_name"
 
 adb shell am force-stop "$package_name"
@@ -34,7 +34,7 @@ adb shell monkey -p "$package_name" -c android.intent.category.LAUNCHER 1
 sleep 20
 
 adb shell dumpsys activity activities | tee "$diagnostics_dir/activities.txt"
-grep -Eq "(mResumedActivity|topResumedActivity).*\${package_name}" "$diagnostics_dir/activities.txt"
+grep -Eq "(mResumedActivity|topResumedActivity).*${package_name}" "$diagnostics_dir/activities.txt"
 
 capture_diagnostics
 trap - EXIT
