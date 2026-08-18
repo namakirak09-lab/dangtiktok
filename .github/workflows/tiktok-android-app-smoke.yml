@@ -58,7 +58,7 @@ jobs:
           expected='9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba'
           for apk in "${apks[@]}"; do
             verify_out=$("$APKSIGNER" verify --verbose --print-certs "$apk" 2>&1)
-            cert=$(printf '%s\n' "$verify_out" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]' | head -1)
+            cert=$(printf '%s\n' "$verify_out" | grep -m1 -E '(^| )Signer: certificate SHA-256 digest:' | sed 's/.*certificate SHA-256 digest: //' | tr '[:upper:]' '[:lower:]')
             if [ -z "$cert" ]; then
               echo "$verify_out"
               echo "Could not read signer digest for $apk" >&2
