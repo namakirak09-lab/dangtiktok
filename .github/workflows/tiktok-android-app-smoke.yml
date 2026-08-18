@@ -55,10 +55,17 @@ jobs:
           mapfile -t apks < <(find tiktok-splits -type f -name '*.apk' | sort)
           test "${#apks[@]}" -gt 0
           base=''
+          expected='9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba'
           for apk in "${apks[@]}"; do
-            cert=$("$APKSIGNER" verify --print-certs "$apk" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]' | head -1)
+            verify_out=$("$APKSIGNER" verify --verbose --print-certs "$apk" 2>&1)
+            cert=$(printf '%s\n' "$verify_out" | sed -n 's/^Signer #1 certificate SHA-256 digest: //p' | tr '[:upper:]' '[:lower:]' | head -1)
+            if [ -z "$cert" ]; then
+              echo "$verify_out"
+              echo "Could not read signer digest for $apk" >&2
+              exit 1
+            fi
             echo "$(basename "$apk") signer=$cert"
-            test "$cert" = '9041803e91bcb814b4b4399fb5c85a91640b755e5e8ba76813814bf4cf2ab5ba'
+            test "$cert" = "$expected"
             pkg=$("$AAPT" dump badging "$apk" 2>/dev/null | sed -n "s/^package: name='\([^']*\)'.*/\1/p" | head -1 || true)
             if [ "$pkg" = 'com.zhiliaoapp.musically' ]; then base="$apk"; fi
           done
