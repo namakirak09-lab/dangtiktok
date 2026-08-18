@@ -56,10 +56,17 @@ try {
             '--no-sandbox',
             '--disable-dev-shm-usage',
             '--window-size=1280,800',
+            '--disable-blink-features=AutomationControlled',
             '--lang=vi-VN',
           ],
         })
-        const context = await browser.newContext({ storageState, viewport: { width: 1280, height: 800 }, locale: 'vi-VN' })
+        const context = await browser.newContext({
+          storageState,
+          viewport: { width: 1280, height: 800 },
+          locale: 'vi-VN',
+          timezoneId: 'Asia/Ho_Chi_Minh',
+          deviceScaleFactor: 1,
+        })
         const page = await context.newPage()
 
         const result = await postPhotoCarousel({

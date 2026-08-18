@@ -7,6 +7,23 @@ Deno.serve(async (req) => {
     const user = await requireUser(req)
     const { account_id } = await req.json()
     const db = serviceClient()
+
+    // Clean up stale pairing sessions (> 3 minutes old)
+    const staleTime = new Date(Date.now() - 3 * 60 * 1000).toISOString()
+    const { data: staleSessions } = await db
+      .from('pairing_sessions')
+      .select('id,account_id')
+      .eq('owner_id', user.id)
+      .eq('status', 'starting')
+      .lt('created_at', staleTime)
+
+    if (staleSessions?.length) {
+      const staleIds = staleSessions.map((s) => s.id)
+      const staleAccountIds = staleSessions.map((s) => s.account_id)
+      await db.from('pairing_sessions').update({ status: 'failed', error: 'Quá thời gian khởi động (Timeout 3 phút).' }).in('id', staleIds)
+      await db.from('tiktok_accounts').update({ status: 'unpaired' }).in('id', staleAccountIds).eq('status', 'pairing')
+    }
+
     const { data: account, error } = await db.from('tiktok_accounts').select('id,owner_id').eq('id', account_id).single()
     if (error || !account || account.owner_id !== user.id) throw new Error('Không tìm thấy tài khoản.')
 
@@ -34,8 +51,8 @@ Deno.serve(async (req) => {
     if (!r.ok) {
       const text = await r.text()
       await db.from('pairing_sessions').update({ status: 'failed', error: `GitHub ${r.status}: ${text.slice(0, 300)}` }).eq('id', pairing.id)
-      await db.from('tiktok_accounts').update({ status: 'unpaired' }).eq('id', account_id)
-      throw new Error('Không gọi được runner GitHub.')
+      await db.from('tiktok_accounts').update({ status: 'unpaired', attention_reason: `Không gọi được runner GitHub (${r.status}).` }).eq('id', account_id)
+      throw new Error(`Không gọi được runner GitHub (${r.status}).`)
     }
 
     return Response.json({ pairing_id: pairing.id }, { headers: corsHeaders })

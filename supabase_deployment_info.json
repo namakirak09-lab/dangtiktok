@@ -1,9 +1,0 @@
-{
-  "DISPATCH_SECRET": "e0538a43c760ce03ee7e19e551e78349ce21d135b8cd907f3426eee0db919838",
-  "SESSION_ENCRYPTION_KEY": "15148061b43bb1e0a32942aceba9a89ae2b7926c62f920b97aad3d2ef1749f8a",
-  "SUPABASE_PROJECT_REF": "llyjyfsxcltgachhblpk",
-  "SUPABASE_URL": "https://llyjyfsxcltgachhblpk.supabase.co",
-  "SUPABASE_ANON_KEY": "sb_publishable_a1XW3Z3X0bQAhpJs852yrQ_C8Idl0OF",
-  "SUPABASE_SERVICE_ROLE_KEY": "sb_secret_ZOVlZDUSwVTqkCJCSPKgOQ_NquKw_ZG",
-  "GITHUB_REPO": "namakirak09-lab/dangtiktok"
-}

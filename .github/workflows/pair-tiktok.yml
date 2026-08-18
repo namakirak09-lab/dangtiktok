@@ -14,7 +14,7 @@ permissions:
 jobs:
   pair:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 15
     env:
       PAIRING_ID: ${{ inputs.pairing_id }}
       SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
@@ -56,7 +56,7 @@ jobs:
           x11vnc -display :99 -rfbauth /tmp/vnc.pass -forever -shared -rfbport 5900 -noxdamage > /tmp/x11vnc.log 2>&1 &
           websockify --web=/usr/share/novnc/ 6080 localhost:5900 > /tmp/novnc.log 2>&1 &
           cloudflared tunnel --no-autoupdate --url http://127.0.0.1:6080 > /tmp/cloudflared.log 2>&1 &
-          for i in $(seq 1 40); do
+          for i in $(seq 1 45); do
             URL=$(grep -Eo 'https://[-a-z0-9]+\.trycloudflare\.com' /tmp/cloudflared.log | head -n1 || true)
             if [ -n "$URL" ]; then
               echo "PAIR_LIVE_URL=$URL/vnc.html?autoconnect=true&resize=scale" >> "$GITHUB_ENV"
@@ -70,7 +70,7 @@ jobs:
       - name: Pair through TikTok UI
         run: node automation/pair.mjs
 
-      - name: Mark failure
-        if: failure()
+      - name: Mark failure or cancel
+        if: always() && (cancelled() || failure())
         run: |
-          PAIR_STATUS=failed PAIR_ERROR="Runner ghép phiên lỗi. Mở Actions log để xem chi tiết." node automation/update-pairing.mjs || true
+          PAIR_STATUS=failed PAIR_ERROR="Runner ghép phiên dừng hoặc gặp sự cố. Kiểm tra GitHub Actions." node automation/update-pairing.mjs || true

@@ -30,9 +30,23 @@ await patch('pairing_sessions', `id=eq.${pairingId}`, {
 const browser = await chromium.launch({
   headless: false,
   executablePath: chromePath,
-  args: ['--no-sandbox', '--disable-dev-shm-usage', '--window-size=1280,800'],
+  args: [
+    '--no-sandbox',
+    '--disable-dev-shm-usage',
+    '--window-size=1280,800',
+    '--disable-blink-features=AutomationControlled',
+    '--lang=vi-VN',
+  ],
 })
-const context = await browser.newContext({ storageState, viewport: { width: 1280, height: 800 } })
+
+const context = await browser.newContext({
+  storageState,
+  viewport: { width: 1280, height: 800 },
+  locale: 'vi-VN',
+  timezoneId: 'Asia/Ho_Chi_Minh',
+  deviceScaleFactor: 1,
+})
+
 const page = await context.newPage()
 await page.goto('https://www.tiktok.com/login', { waitUntil: 'domcontentloaded', timeout: 60000 }).catch(async () => {
   await page.goto('https://www.tiktok.com/', { waitUntil: 'domcontentloaded', timeout: 60000 })

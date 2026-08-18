@@ -110,7 +110,7 @@ export function ComposePage({
     <div className="page-wrap">
       <header className="page-header">
         <div><span className="eyebrow">PHOTO POST</span><h1>Đăng ảnh</h1><p>Ném ảnh, kéo đúng thứ tự rồi để cloud bấm TikTok thay ông.</p></div>
-        <div className="status-badge"><span /> Không dùng TikTok Developer API</div>
+        <div className="status-badge"><span /> Tự động hóa UI</div>
       </header>
 
       <div className="compose-layout">
@@ -147,7 +147,6 @@ export function ComposePage({
               </div>
             </div>
             {musicMode === 'search' && <input value={musicQuery} onChange={(e) => setMusicQuery(e.target.value)} placeholder="Ví dụ: Tháp rơi tự do..." />}
-            <div className="api-note">Runner thao tác đúng giao diện TikTok. Nếu tài khoản/khu vực không có nút nhạc hoặc Photo mode trên web, job sẽ dừng ở “Cần xác nhận” thay vì bấm mò.</div>
           </div>
 
           <div className="schedule-tabs">
