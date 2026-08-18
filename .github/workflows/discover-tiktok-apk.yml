@@ -16,26 +16,39 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - name: Fetch official TikTok Android download page
+      - name: Probe official TikTok Android download variants
         shell: bash
         run: |
           set -euo pipefail
-          UA='Mozilla/5.0 (Linux; Android 14; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36'
-          curl -L --fail --retry 3 --connect-timeout 15 -A "$UA" 'https://www.tiktok.com/download' -o tiktok-download.html
-          echo 'HTML bytes:' $(wc -c < tiktok-download.html)
-          python3 - <<'PY'
-          import re, html
-          s=open('tiktok-download.html','r',encoding='utf-8',errors='ignore').read()
-          urls=[]
-          for raw in re.findall(r'https?:\\?/\\?/[^"<> ]+', s):
-              u=html.unescape(raw.replace('\\u002F','/').replace('\\/','/'))
-              if 'apk' in u.lower() or 'download' in u.lower():
-                  urls.append(u)
-          for u in sorted(set(urls)):
-              print(u[:1000])
-          PY
-      - name: Upload page for inspection
+          pixel='Mozilla/5.0 (Linux; Android 14; Pixel 7 Pro) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Mobile Safari/537.36'
+          huawei='Mozilla/5.0 (Linux; Android 12; NOH-NX9 Build/HUAWEINOH-N29; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/114.0.5735.196 Mobile Safari/537.36'
+          samsung='Mozilla/5.0 (Linux; Android 13; SM-S918B) AppleWebKit/537.36 (KHTML, like Gecko) SamsungBrowser/25.0 Chrome/121.0.0.0 Mobile Safari/537.36'
+          urls=(
+            'https://www.tiktok.com/download'
+            'https://www.tiktok.com/download?platform=android'
+            'https://www.tiktok.com/download?source=apk'
+            'https://www.tiktok.com/download?download=apk'
+            'https://www.tiktok.com/download/vi-VN'
+          )
+          : > probe.txt
+          i=0
+          for ua_name in pixel huawei samsung; do
+            ua="${!ua_name}"
+            for url in "${urls[@]}"; do
+              i=$((i+1))
+              out="page-$i.html"
+              echo "=== $ua_name :: $url ===" | tee -a probe.txt
+              curl -sS -L --fail --retry 2 --connect-timeout 15 -A "$ua" -D "headers-$i.txt" -o "$out" -w 'FINAL_URL=%{url_effective}\nHTTP=%{http_code}\nTYPE=%{content_type}\nSIZE=%{size_download}\n' "$url" | tee -a probe.txt
+              grep -Eoi 'https?[^"<> ]+|market://[^"<> ]+|intent://[^"<> ]+' "$out" | grep -Ei 'apk|download|market|intent' | head -30 | tee -a probe.txt || true
+              grep -Eoi '[A-Za-z0-9_./?&=%:-]{10,}' "$out" | grep -Ei '\.apk|apk_download|download.*apk|apk.*download' | head -30 | tee -a probe.txt || true
+            done
+          done
+          cat probe.txt
+      - name: Upload probe
         uses: actions/upload-artifact@v4
         with:
-          name: tiktok-download-page
-          path: tiktok-download.html
+          name: tiktok-apk-probe
+          path: |
+            probe.txt
+            page-*.html
+            headers-*.txt
