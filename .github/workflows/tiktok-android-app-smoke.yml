@@ -24,9 +24,12 @@ jobs:
           sudo udevadm trigger --name-match=kvm
           test -e /dev/kvm
 
-      - name: Install apkeep
+      - name: Install apkeep release binary
         run: |
-          cargo install apkeep --version 1.0.0 --locked
+          set -euo pipefail
+          curl -fL --retry 3 -o /tmp/apkeep 'https://github.com/EFForg/apkeep/releases/download/1.0.0/apkeep-x86_64-unknown-linux-gnu'
+          chmod +x /tmp/apkeep
+          sudo install -m 0755 /tmp/apkeep /usr/local/bin/apkeep
           apkeep --version
 
       - name: Download TikTok APK and verify signer
