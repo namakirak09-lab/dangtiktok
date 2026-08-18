@@ -1,0 +1,67 @@
+name: Probe TikTok mobile web photo composer
+
+on:
+  push:
+    branches: [android-publisher-lab]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright@1.55.0
+          npx playwright install --with-deps chromium
+      - name: Probe upload surfaces with Android emulation
+        run: |
+          cat > /tmp/probe.mjs <<'JS'
+          import { chromium, devices } from 'playwright';
+          import fs from 'node:fs/promises';
+          const browser = await chromium.launch({headless:true});
+          const device = devices['Pixel 7'];
+          const context = await browser.newContext({...device, locale:'vi-VN', timezoneId:'Asia/Ho_Chi_Minh'});
+          const page = await context.newPage();
+          const urls = [
+            'https://www.tiktok.com/upload',
+            'https://www.tiktok.com/tiktokstudio/upload',
+            'https://m.tiktok.com/upload',
+            'https://www.tiktok.com/creator-center/upload',
+          ];
+          let report='';
+          for (let i=0;i<urls.length;i++) {
+            const u=urls[i];
+            try {
+              await page.goto(u,{waitUntil:'domcontentloaded',timeout:30000});
+              await page.waitForTimeout(3000);
+              const info=await page.evaluate(() => ({
+                url:location.href,
+                title:document.title,
+                inputs:[...document.querySelectorAll('input[type=file]')].map(x=>({accept:x.accept,multiple:x.multiple,outer:x.outerHTML.slice(0,500)})),
+                text:document.body?.innerText?.slice(0,12000)||'',
+              }));
+              report += `\n=== ${u} ===\n${JSON.stringify(info,null,2)}\n`;
+              await page.screenshot({path:`probe-${i+1}.png`,fullPage:true});
+            } catch(e) { report += `\n=== ${u} ERROR ===\n${e.stack||e}\n`; }
+          }
+          await fs.writeFile('mobile-web-probe.txt',report);
+          console.log(report);
+          await browser.close();
+          JS
+          node /tmp/probe.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mobile-web-photo-probe
+          path: |
+            mobile-web-probe.txt
+            probe-*.png
