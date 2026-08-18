@@ -87,13 +87,13 @@ jobs:
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none -camera-front none -no-metrics
           disable-animations: true
           script: |
-            set -euo pipefail
+            set -eu
             adb wait-for-device
             test "$(adb shell getprop sys.boot_completed | tr -d '\r')" = "1"
             echo 'Supported ABIs:'
             adb shell getprop ro.product.cpu.abilist
-            mapfile -t apks < "$TIKTOK_APK_LIST"
-            adb install-multiple -r "${apks[@]}"
+            apk_args=$(tr '\n' ' ' < "$TIKTOK_APK_LIST")
+            adb install-multiple -r $apk_args
             adb shell pm path com.zhiliaoapp.musically
             adb shell monkey -p com.zhiliaoapp.musically -c android.intent.category.LAUNCHER 1
             sleep 15
